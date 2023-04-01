@@ -1,0 +1,20 @@
+// Topology
+topology = mesh;
+k = 8;
+n = 2;
+// Routing
+routing_function = dim_order;
+// Flow control
+num_vcs = 16;
+//router architecture
+//input_speedup = 2;
+//output_speedup = 2;
+//alloc_iters = 2;
+speculative = 1;
+
+// Traffic
+traffic = uniform;
+injection_rate = 0.15;
+//injection_process = on_off;
+//Simulation parameters
+//latency_thres = 10000.0;
