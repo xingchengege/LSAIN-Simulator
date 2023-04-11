@@ -45,7 +45,9 @@
 
 #include "channel.hpp"
 #include "flit.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std;
 
 class Router ;
@@ -95,5 +97,7 @@ private:
   vector<int> _active;
   int _idle;
 };
-
+}
+}
+}
 #endif

@@ -33,11 +33,14 @@
 
 #include "booksim.hpp"
 #include "outputset.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Flit {
 
 public:
-
+  Flit();
+  ~Flit() {}
   const static int NUM_FLIT_TYPES = 5;
   enum FlitType { READ_REQUEST  = 0, 
 		  READ_REPLY    = 1,
@@ -53,12 +56,12 @@ public:
   bool head;
   bool tail;
   
-  int  ctime;
-  int  itime;
-  int  atime;
+  long long  ctime;
+  long long  itime;
+  long long  atime;
 
-  int  id;
-  int  pid;
+  long  id;
+  long  pid;
 
   bool record;
 
@@ -70,6 +73,9 @@ public:
   int  hops;
   bool watch;
   int  subnetwork;
+
+  //packet的大小
+  int packet_size;
   
   // intermediate destination (if any)
   mutable int intm;
@@ -91,8 +97,7 @@ public:
 
 private:
 
-  Flit();
-  ~Flit() {}
+ 
 
   static stack<Flit *> _all;
   static stack<Flit *> _free;
@@ -100,5 +105,7 @@ private:
 };
 
 ostream& operator<<( ostream& os, const Flit& f );
-
+}
+}
+}
 #endif

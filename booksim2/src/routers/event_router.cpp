@@ -34,7 +34,9 @@
 #include "event_router.hpp"
 #include "stats.hpp"
 #include "globals.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 EventRouter::EventRouter( const Configuration& config,
 		    Module *parent, const string & name, int id,
 		    int inputs, int outputs )
@@ -887,4 +889,7 @@ void EventNextVCState::SetInputVC( int vc, int in_vc )
 {
   assert( ( vc >= 0 ) && ( vc < _vcs ) );
   _inputVC[vc] = in_vc;
+}
+}
+}
 }

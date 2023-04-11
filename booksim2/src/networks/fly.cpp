@@ -33,7 +33,9 @@
 #include "misc_utils.hpp"
 
 //#define DEBUG_FLY
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 KNFly::KNFly( const Configuration &config, const string & name ) :
 Network( config, name )
 {
@@ -160,3 +162,6 @@ double KNFly::Capacity( ) const
   return 1.0;
 }
 
+}
+}
+}

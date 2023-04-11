@@ -30,7 +30,9 @@
 
 #include "pim.hpp"
 #include "random_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 //#define DEBUG_PIM
 
 PIM::PIM( Module *parent, const string& name,
@@ -117,4 +119,6 @@ void PIM::Allocate( )
 #endif
 }
 
-
+}
+}
+}

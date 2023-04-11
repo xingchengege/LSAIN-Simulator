@@ -31,7 +31,9 @@
 #include <set>
 
 #include "allocator.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Wavefront : public DenseAllocator {
 
 private:
@@ -53,5 +55,8 @@ public:
 			   int in_pri = 0, int out_pri = 0 );
   virtual void Allocate( );
 };
+}
+}
+}
 
 #endif

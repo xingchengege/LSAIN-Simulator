@@ -39,6 +39,9 @@
 #include "globals.hpp"
 #include "booksim.hpp"
 #include "vc.hpp"
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 const char * const VC::VCSTATE[] = {"idle",
 				    "routing",
@@ -220,4 +223,7 @@ void VC::Display( ostream & os ) const
     os << " pri: " << _pri;
     os << endl;
   }
+}
+}
+}
 }

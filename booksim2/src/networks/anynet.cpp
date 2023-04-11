@@ -55,6 +55,9 @@
 #include <sstream>
 #include <limits>
 #include <algorithm>
+namespace gem5{
+namespace ruby{
+namespace booksim{
 //this is a hack, I can't easily get the routing talbe out of the network
 map<int, int>* global_routing_table;
 
@@ -499,3 +502,6 @@ void AnyNet::readFile(){
   
 }
 
+}
+}
+}

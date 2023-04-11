@@ -30,7 +30,9 @@
 
 #include "selalloc.hpp"
 #include "random_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 //#define DEBUG_SELALLOC
 
 SelAlloc::SelAlloc( Module *parent, const string& name,
@@ -252,3 +254,6 @@ void SelAlloc::PrintRequests( ostream * os ) const
   *os << "]." << endl;
 }
 
+}
+}
+}

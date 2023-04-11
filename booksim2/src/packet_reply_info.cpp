@@ -26,7 +26,9 @@
 */
 
 #include "packet_reply_info.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 stack<PacketReplyInfo*> PacketReplyInfo::_all;
 stack<PacketReplyInfo*> PacketReplyInfo::_free;
 
@@ -54,4 +56,7 @@ void PacketReplyInfo::FreeAll()
     delete _all.top();
     _all.pop();
   }
+}
+}
+}
 }

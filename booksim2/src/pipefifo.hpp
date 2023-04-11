@@ -31,7 +31,9 @@
 #include <vector>
 
 #include "module.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 template<class T> class PipelineFIFO : public Module {
   int _lanes;
   int _depth;
@@ -93,5 +95,7 @@ template<class T> void PipelineFIFO<T>::Advance( )
 {
   _pipe_ptr = ( _pipe_ptr + 1 ) % _pipe_len;
 }
-
+}
+}
+}
 #endif 

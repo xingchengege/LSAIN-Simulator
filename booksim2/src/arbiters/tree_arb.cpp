@@ -34,7 +34,9 @@
 #include "tree_arb.hpp"
 #include <iostream>
 #include <sstream>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std ;
 
 TreeArbiter::TreeArbiter( Module *parent, const string &name,
@@ -116,4 +118,8 @@ void TreeArbiter::Clear()
   }
   _global_arbiter->Clear();
   Arbiter::Clear();
+}
+
+}
+}
 }

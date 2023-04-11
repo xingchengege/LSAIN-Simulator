@@ -51,7 +51,9 @@
 
 #include "tree4.hpp"
 #include "misc_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 Tree4::Tree4( const Configuration& config, const string & name )
 : Network ( config, name )
 {
@@ -287,4 +289,7 @@ int Tree4::_WireLatency( int height1, int pos1, int height2, int pos2 )
   }
   assert(L != -1);
   return L;
+}
+}
+}
 }

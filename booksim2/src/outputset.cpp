@@ -37,7 +37,9 @@
 
 #include "booksim.hpp"
 #include "outputset.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 void OutputSet::Clear( )
 {
   _outputs.clear( );
@@ -150,4 +152,7 @@ bool OutputSet::GetPortVC( int *out_port, int *out_vc ) const
        i++;
   }
   return single_output;
+}
+}
+}
 }

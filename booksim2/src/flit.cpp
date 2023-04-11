@@ -36,7 +36,9 @@
 
 #include "booksim.hpp"
 #include "flit.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 stack<Flit *> Flit::_all;
 stack<Flit *> Flit::_free;
 
@@ -80,6 +82,7 @@ void Flit::Reset()
   intm =-1;
   ph = -1;
   data = 0;
+  packet_size = 0;
 }  
 
 Flit * Flit::New() {
@@ -92,11 +95,13 @@ Flit * Flit::New() {
     f->Reset();
     _free.pop();
   }
+//   f = new Flit;
   return f;
 }
 
 void Flit::Free() {
-  _free.push(this);
+//   _free.push(this);
+   delete this;
 }
 
 void Flit::FreeAll() {
@@ -104,4 +109,7 @@ void Flit::FreeAll() {
     delete _all.top();
     _all.pop();
   }
+}
+}
+}
 }

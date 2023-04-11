@@ -38,7 +38,9 @@
 #include <cstdlib>
 
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 Configuration *Configuration::theConfig = 0;
 
 Configuration::Configuration()
@@ -444,4 +446,7 @@ vector<double> tokenize_float(string const & data)
   assert(!nested);
 
   return values;
+}
+}
+}
 }

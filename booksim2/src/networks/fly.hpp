@@ -29,7 +29,9 @@
 #define _FLY_HPP_
 
 #include "network.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class KNFly : public Network {
 
   int _k;
@@ -49,5 +51,7 @@ public:
   static void RegisterRoutingFunctions(){};
   double Capacity( ) const;
 };
-
+}
+}
+}
 #endif 

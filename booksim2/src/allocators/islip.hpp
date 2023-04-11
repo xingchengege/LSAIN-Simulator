@@ -31,7 +31,9 @@
 #include <vector>
 
 #include "allocator.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class iSLIP_Sparse : public SparseAllocator {
   int _iSLIP_iter;
 
@@ -44,5 +46,7 @@ public:
 
   void Allocate( );
 };
-
+}
+}
+}
 #endif 

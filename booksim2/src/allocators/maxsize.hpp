@@ -31,7 +31,9 @@
 #include <vector>
 
 #include "allocator.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class MaxSizeMatch : public DenseAllocator {
   vector<int> _from;   // array to hold breadth-first tree
   int *_s;      // stack of leaf nodes in tree
@@ -47,5 +49,7 @@ public:
   
   void Allocate( );
 };
-
+}
+}
+}
 #endif 

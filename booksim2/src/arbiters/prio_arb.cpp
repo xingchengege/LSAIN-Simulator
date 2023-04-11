@@ -30,7 +30,9 @@
 
 #include "prio_arb.hpp"
 
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 PriorityArbiter::PriorityArbiter( const Configuration &config,
 				  Module *parent, const string& name,
 				  int inputs ) 
@@ -157,4 +159,8 @@ void PriorityArbiter::Arbitrate( )
 void PriorityArbiter::Update( )
 {
   _rr_ptr = ( _rr_ptr + 1 ) % _inputs;
+}
+
+}
+}
 }

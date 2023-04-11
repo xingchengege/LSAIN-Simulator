@@ -35,7 +35,9 @@
 #define _ROUNDROBIN_HPP_
 
 #include "arbiter.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class RoundRobinArbiter : public Arbiter {
 
   // Priority pointer
@@ -71,5 +73,9 @@ public:
   }
   
 } ;
+
+}
+}
+}
 
 #endif

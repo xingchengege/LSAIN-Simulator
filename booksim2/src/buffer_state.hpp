@@ -35,7 +35,9 @@
 #include "flit.hpp"
 #include "credit.hpp"
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class BufferState : public Module {
   
   class BufferPolicy : public Module {
@@ -235,5 +237,7 @@ public:
 
   void Display( ostream & os = cout ) const;
 };
-
+}
+}
+}
 #endif 

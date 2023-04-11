@@ -30,7 +30,9 @@
 #include "buffer_monitor.hpp"
 #include "switch_monitor.hpp"
 #include "iq_router.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 Power_Module::Power_Module(Network * n , const Configuration &config)
   : Module( 0, "power_module" ){
 
@@ -529,4 +531,8 @@ void Power_Module::run(){
 
 
 
+}
+
+}
+}
 }

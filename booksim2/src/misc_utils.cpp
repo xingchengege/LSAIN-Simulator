@@ -27,7 +27,9 @@
 
 #include "booksim.hpp"
 #include "misc_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 int powi( int x, int y ) // compute x to the y
 {
   int r = 1;
@@ -49,4 +51,7 @@ int log_two( int x )
   }
 
   return r;
+}
+}
+}
 }

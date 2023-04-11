@@ -43,6 +43,9 @@
 
 #include "network.hpp"
 #include "routefunc.hpp"
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 class CMesh : public Network {
 public:
@@ -92,4 +95,7 @@ void dor_cmesh( const Router *r, const Flit *f, int in_channel,
 void dor_no_express_cmesh( const Router *r, const Flit *f, int in_channel, 
 			   OutputSet *outputs, bool inject ) ;
 
+}
+}
+}
 #endif

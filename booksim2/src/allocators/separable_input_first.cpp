@@ -39,7 +39,9 @@
 #include <vector>
 #include <iostream>
 #include <cstring>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 SeparableInputFirstAllocator::
 SeparableInputFirstAllocator( Module* parent, const string& name, int inputs,
 			      int outputs, const string& arb_type )
@@ -100,4 +102,7 @@ void SeparableInputFirstAllocator::Allocate() {
 
     ++port_iter;
   }
+}
+}
+}
 }

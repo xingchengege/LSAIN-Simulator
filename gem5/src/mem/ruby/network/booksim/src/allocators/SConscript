@@ -1,0 +1,15 @@
+# Import('*')
+
+# if env['PROTOCOL'] == 'None':
+#     Return()
+
+# Source('allocator.cpp')
+# Source('islip.cpp')
+# Source('loa.cpp')
+# Source('maxsize.cpp')
+# Source('pim.cpp')
+# Source('selalloc.cpp')
+# Source('separable_input_first.cpp')
+# Source('separable_output_first.cpp')
+# Source('separable.cpp')
+# Source('wavefront.cpp')

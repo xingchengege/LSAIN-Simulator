@@ -36,7 +36,9 @@
 #include <sstream>
 
 #include "arbiter.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 SeparableAllocator::SeparableAllocator( Module* parent, const string& name,
 					int inputs, int outputs,
 					const string& arb_type )
@@ -83,4 +85,7 @@ void SeparableAllocator::Clear() {
       _output_arb[o]->Clear();
   }
   SparseAllocator::Clear();
+}
+}
+}
 }

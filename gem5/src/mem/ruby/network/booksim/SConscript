@@ -1,0 +1,20 @@
+
+Import('*')
+
+if env['PROTOCOL'] == 'None':
+    Return()
+
+#FIXME: LIBPATH hard-coded route. Is this required?
+env.Append(
+         LIBS=['booksim'],
+         LIBPATH=['/home/liuxc/LSAIN-Simulator/gem5'])
+
+
+SimObject('BooksimNetwork.py', sim_objects = ['BooksimNetwork', 'NetworkSwitch'])
+
+Source('BooksimNetwork.cc')
+Source('NetworkInterface.cc')
+Source('NetworkSwitch.cc')
+
+DebugFlag('Booksim')
+DebugFlag('BooksimSwitch')

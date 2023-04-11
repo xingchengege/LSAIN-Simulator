@@ -53,7 +53,9 @@
 #include "network.hpp"
 #include "injection.hpp"
 #include "power_module.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,7 +65,7 @@
  /* the current traffic manager instance */
 TrafficManager * trafficManager = NULL;
 
-int GetSimTime() {
+long long GetSimTime() {
   return trafficManager->getTime();
 }
 
@@ -81,7 +83,10 @@ bool gPrintActivity;
 
 int gK;//radix
 int gN;//dimension
-int gC;//concentration
+int gC = 1;//concentration
+
+vector<int> gKvector;
+vector<int> gCvector;
 
 int gNodes;
 
@@ -184,4 +189,7 @@ int main( int argc, char **argv )
    */
   bool result = Simulate( config );
   return result ? -1 : 0;
+}
+}
+}
 }

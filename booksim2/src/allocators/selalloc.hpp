@@ -31,7 +31,9 @@
 #include <vector>
 
 #include "allocator.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class SelAlloc : public SparseAllocator {
   int _iter;
 
@@ -51,5 +53,7 @@ public:
   virtual void PrintRequests( ostream * os = NULL ) const;
 
 };
-
+}
+}
+}
 #endif 

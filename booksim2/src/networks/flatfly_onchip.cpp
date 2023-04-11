@@ -56,7 +56,9 @@
 #include "misc_utils.hpp"
 #include "globals.hpp"
 
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 //#define DEBUG_FLATFLY
 
@@ -1326,4 +1328,8 @@ int flatfly_transformation(int dest){
   dest = (vertical*_xcount + horizontal)*gC+_xrouter*vertical_rem+horizontal_rem;
   //cout<<"Transformed destination "<<dest<<endl<<endl;
   return dest;
+}
+
+}
+}
 }

@@ -44,7 +44,9 @@
 
 //#define DEBUG_FEEDBACK
 //#define DEBUG_SIMPLEFEEDBACK
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 BufferState::BufferPolicy::BufferPolicy(Configuration const & config, BufferState * parent, const string & name)
 : Module(parent, name), _buffer_state(parent)
 {
@@ -673,4 +675,7 @@ void BufferState::Display( ostream & os ) const
        << ", tail_sent = " << _tail_sent[v]
        << ", occupied = " << _vc_occupancy[v] << endl;
   }
+}
+}
+}
 }

@@ -26,9 +26,14 @@
 */
 
 #define main rng_main
-#include "rng.c"
-
+#include "rng.hpp"
+namespace gem5{
+namespace ruby{
+namespace booksim{
 long ran_next( )
 {
   return ran_arr_next( );
+}
+}
+}
 }

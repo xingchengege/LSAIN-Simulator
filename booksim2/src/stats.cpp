@@ -41,7 +41,9 @@
 #include <cstdio>
 
 #include "stats.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 Stats::Stats( Module *parent, const string &name,
 	      double bin_size, int num_bins ) :
   Module( parent, name ), _num_bins( num_bins ), _bin_size( bin_size )
@@ -98,7 +100,7 @@ int Stats::NumSamples( ) const
   return _num_samples;
 }
 
-void Stats::AddSample( double val )
+void Stats::AddSample( long double val )
 {
   ++_num_samples;
   _sample_sum += val;
@@ -127,4 +129,7 @@ ostream & operator<<(ostream & os, const Stats & s) {
   }
   os << "]";
   return os;
+}
+}
+}
 }

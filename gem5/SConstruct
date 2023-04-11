@@ -272,6 +272,9 @@ main.Prepend(CPPPATH=Dir('include'))
 # build settings.
 #
 ########################################################################
+# Set up common yacc/bison flags (needed for Ruby)
+main['YACCFLAGS'] = '-d'
+main['YACCHXXFILESUFFIX'] = '.hh'
 
 # Initialize the Link-Time Optimization (LTO) flags
 main['LTO_CCFLAGS'] = []
@@ -700,7 +703,8 @@ Build variables for {dir}:
 
     # Pull all the sticky variables into the CONF dict.
     env['CONF'].update({key: env[key] for key in sticky_vars.keys()})
-
+    
+    env['YACCFLAGS'] = '-d'
     # Do this after we save setting back, or else we'll tack on an
     # extra 'qdo' every time we run scons.
     if env['CONF']['BATCH']:

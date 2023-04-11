@@ -38,7 +38,9 @@
 
 #include <limits>
 #include <cassert>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std ;
 
 Arbiter::Arbiter( Module *parent, const string &name, int size )
@@ -108,4 +110,7 @@ Arbiter *Arbiter::NewArbiter( Module *parent, const string& name,
     a = new TreeArbiter( parent, name, size, groups, sub_arb_type );
   } else assert(false);
   return a;
+}
+}
+}
 }

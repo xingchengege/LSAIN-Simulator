@@ -34,7 +34,9 @@
 
 #include "booksim.hpp"
 #include "booksim_config.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 BookSimConfig::BookSimConfig( )
 { 
   //========================================================
@@ -50,8 +52,10 @@ BookSimConfig::BookSimConfig( )
   //==== Topology options =======================
   AddStrField( "topology", "torus" );
   _int_map["k"] = 8; //network radix
+  AddStrField("k",""); //Workaround to allow vector specification
   _int_map["n"] = 2; //network dimension
   _int_map["c"] = 1; //concentration
+  AddStrField("c",""); //Workaround to allow vector specification
   AddStrField( "routing_function", "none" );
 
   //simulator tries to correclty adjust latency for node/router placement 
@@ -96,6 +100,8 @@ BookSimConfig::BookSimConfig( )
 
   //==== Input-queued ======================================
 
+  _int_map["injection_queues"] = 1;
+  _int_map["injection_queue_size"] = 1000;
   // Control of virtual channel speculation
   _int_map["speculative"] = 0 ;
   _int_map["spec_check_elig"] = 1 ;
@@ -175,6 +181,13 @@ BookSimConfig::BookSimConfig( )
   // if multiple values are specified per class, set probabilities for each
   _int_map["packet_size_rate"] = 1;
   AddStrField("packet_size_rate", ""); // workaraound to allow for vector specification
+  // Control assignment of packets to VCs
+  _int_map["start_vc"] = -1;
+  AddStrField("start_vc", ""); // workaraound to allow for vector specification
+  _int_map["end_vc"] = -1;
+  AddStrField("end_vc", ""); // workaraound to allow for vector specification
+
+
 
   AddStrField( "injection_process", "bernoulli" );
 
@@ -346,4 +359,7 @@ PowerConfig::PowerConfig( )
   _float_map["Cw_cpl"] = 0;
   _float_map["wire_length"] = 0;
 
+}
+}
+}
 }

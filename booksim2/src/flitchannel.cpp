@@ -39,7 +39,9 @@
 
 #include "router.hpp"
 #include "globals.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 // ----------------------------------------------------------------------
 //  $Author: jbalfour $
 //  $Date: 2007/06/27 23:10:17 $
@@ -88,4 +90,7 @@ void FlitChannel::WriteOutputs() {
 	       << "Completed channel traversal for flit " << _output->id
 	       << "." << endl;
   }
+}
+}
+}
 }

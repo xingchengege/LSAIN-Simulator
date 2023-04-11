@@ -31,7 +31,9 @@
 #include <vector>
 
 #include "allocator.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class PIM : public DenseAllocator {
   int _PIM_iter;
 
@@ -43,5 +45,7 @@ public:
 
   void Allocate( );
 };
-
+}
+}
+}
 #endif

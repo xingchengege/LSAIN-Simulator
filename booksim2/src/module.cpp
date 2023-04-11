@@ -37,7 +37,9 @@
 
 #include "booksim.hpp"
 #include "module.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 Module::Module( Module *parent, const string& name )
 {
   _name = name;
@@ -85,4 +87,7 @@ void Module::Debug( const string& msg ) const
 void Module::Display( ostream & os ) const 
 {
   os << "Display method not implemented for " << _fullname << endl;
+}
+}
+}
 }

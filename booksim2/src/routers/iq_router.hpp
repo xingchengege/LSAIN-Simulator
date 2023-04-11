@@ -36,7 +36,9 @@
 
 #include "router.hpp"
 #include "routefunc.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std;
 
 class VC;
@@ -179,5 +181,7 @@ public:
   BufferMonitor const * const GetBufferMonitor() const {return _bufferMonitor;}
 
 };
-
+}
+}
+}
 #endif

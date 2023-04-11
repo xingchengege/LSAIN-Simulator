@@ -37,7 +37,9 @@
 #include <set>
 
 #include "separable.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class SeparableInputFirstAllocator : public SeparableAllocator {
 
 public:
@@ -48,5 +50,7 @@ public:
   virtual void Allocate() ;
 
 } ;
-
+}
+}
+}
 #endif

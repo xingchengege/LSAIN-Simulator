@@ -30,7 +30,9 @@
 #include "globals.hpp"
 #include "booksim.hpp"
 #include "buffer.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 Buffer::Buffer( const Configuration& config, int outputs, 
 		Module *parent, const string& name ) :
 Module( parent, name ), _occupancy(0)
@@ -80,4 +82,7 @@ void Buffer::Display( ostream & os ) const
   for(vector<VC*>::const_iterator i = _vc.begin(); i != _vc.end(); ++i) {
     (*i)->Display(os);
   }
+}
+}
+}
 }

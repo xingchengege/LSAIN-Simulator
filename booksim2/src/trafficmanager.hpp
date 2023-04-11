@@ -43,7 +43,9 @@
 #include "routefunc.hpp"
 #include "outputset.hpp"
 #include "injection.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 //register the requests to a node
 class PacketReplyInfo;
 
@@ -62,6 +64,8 @@ protected:
 
   vector<Network *> _net;
   vector<vector<Router *> > _router;
+
+  unsigned int _inj_size;
 
   // ============ Traffic ============ 
 
@@ -208,8 +212,8 @@ protected:
 
   bool _measure_latency;
 
-  int   _reset_time;
-  int   _drain_time;
+  long long   _reset_time;
+  long long   _drain_time;
 
   int   _total_sims;
   int   _sample_period;
@@ -231,7 +235,7 @@ protected:
 
   int _cur_id;
   int _cur_pid;
-  int _time;
+  long long _time;
 
   set<int> _flits_to_watch;
   set<int> _packets_to_watch;
@@ -264,19 +268,20 @@ protected:
 
   virtual void _RetireFlit( Flit *f, int dest );
 
-  void _Inject();
+  virtual void _RetirePacket( Flit *head, Flit *tail );
+
+  virtual void _Inject() = 0;
   void _Step( );
 
   bool _PacketsOutstanding( ) const;
   
-  virtual int  _IssuePacket( int source, int cl );
-  void _GeneratePacket( int source, int size, int cl, int time );
+  long _GeneratePacket( int source, int dest, int size, int cl, long long time );
 
   virtual void _ClearStats( );
 
   void _ComputeStats( const vector<int> & stats, int *sum, int *min = NULL, int *max = NULL, int *min_pos = NULL, int *max_pos = NULL ) const;
 
-  virtual bool _SingleSim( );
+  virtual bool _SingleSim( ) = 0;
 
   void _DisplayRemaining( ostream & os = cout ) const;
   
@@ -288,6 +293,7 @@ protected:
 
   int _GetNextPacketSize(int cl) const;
   double _GetAveragePacketSize(int cl) const;
+
 
 public:
 
@@ -305,7 +311,7 @@ public:
   virtual void DisplayOverallStats( ostream & os = cout ) const ;
   virtual void DisplayOverallStatsCSV( ostream & os = cout ) const ;
 
-  inline int getTime() { return _time;}
+  inline long long getTime() { return _time;}
   Stats * getStats(const string & name) { return _stats[name]; }
 
 };
@@ -318,5 +324,7 @@ ostream & operator<<(ostream & os, const vector<T> & v) {
   os << v[v.size()-1];
   return os;
 }
-
+}
+}
+}
 #endif

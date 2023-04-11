@@ -37,7 +37,9 @@
 #include "flitchannel.hpp"
 #include "channel.hpp"
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 typedef Channel<Credit> CreditChannel;
 
 class Router : public TimedModule {
@@ -198,5 +200,8 @@ public:
   inline int NumInputs() const {return _inputs;}
   inline int NumOutputs() const {return _outputs;}
 };
+}
+}
+}
 
 #endif

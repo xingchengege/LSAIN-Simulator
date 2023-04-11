@@ -46,7 +46,9 @@
 #include "random_utils.hpp"
 #include "misc_utils.hpp"
 #include "cmesh.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 int CMesh::_cX = 0 ;
 int CMesh::_cY = 0 ;
 int CMesh::_memo_NodeShiftX = 0 ;
@@ -74,7 +76,7 @@ void CMesh::_ComputeSize( const Configuration &config ) {
   int n = config.GetInt( "n" );
   assert(n <= 2); // broken for n > 2
   int c = config.GetInt( "c" );
-  assert(c == 4); // broken for c != 4
+  assert(c == 4 || c == 1); // broken for c != 4
 
   ostringstream router_name;
   //how many routers in the x or y direction
@@ -96,7 +98,7 @@ void CMesh::_ComputeSize( const Configuration &config ) {
   _size     = powi( _k, _n);      // Number of routers in network
   _channels = 2 * _n * _size;     // Number of channels in network
 
-  _cX = _c / _n ;   // Concentration in X Dimension 
+  _cX = _c < _n ? 1 : _c / _n ;   // Concentration in X Dimension 
   _cY = _c / _cX ;  // Concentration in Y Dimension
 
   //
@@ -853,4 +855,7 @@ void dor_no_express_cmesh( const Router *r, const Flit *f, int in_channel,
   outputs->Clear();
 
   outputs->AddRange( out_port, vcBegin, vcEnd );
+}
+}
+}
 }

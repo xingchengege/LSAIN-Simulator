@@ -30,7 +30,9 @@
 
 #include "loa.hpp"
 #include "random_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 LOA::LOA( Module *parent, const string& name,
 	  int inputs, int outputs ) :
   DenseAllocator( parent, name, inputs, outputs )
@@ -109,4 +111,6 @@ void LOA::Allocate( )
 
 }
 
-
+}
+}
+}

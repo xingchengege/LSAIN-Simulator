@@ -30,10 +30,12 @@
 #include <string>
 #include <vector>
 #include <iostream>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 /*all declared in main.cpp*/
 
-int GetSimTime();
+long long GetSimTime();
 
 class Stats;
 Stats * GetStats(const std::string & name);
@@ -44,10 +46,15 @@ extern int gK;
 extern int gN;
 extern int gC;
 
+extern std::vector<int> gKvector;
+extern std::vector<int> gCvector;
+
 extern int gNodes;
 
 extern bool gTrace;
 
 extern std::ostream * gWatchOut;
-
+}
+}
+}
 #endif

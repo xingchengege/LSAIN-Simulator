@@ -29,7 +29,9 @@
 #define _INJECTION_HPP_
 
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std;
 
 class InjectionProcess {
@@ -64,5 +66,7 @@ public:
   virtual void reset();
   virtual bool test(int source);
 };
-
+}
+}
+}
 #endif 

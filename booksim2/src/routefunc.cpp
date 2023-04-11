@@ -50,13 +50,19 @@
 #include "qtree.hpp"
 #include "cmesh.hpp"
 
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 map<string, tRoutingFunction> gRoutingFunctionMap;
 
 /* Global information used by routing functions */
 
 int gNumVCs;
+int gNumClasses;
+
+vector<int> gBeginVCs;
+vector<int> gEndVCs;
 
 /* Add more functions here
  *
@@ -72,6 +78,13 @@ int gWriteReplyBeginVC, gWriteReplyEndVC;
 // ============================================================
 //  QTree: Nearest Common Ancestor
 // ===
+void qtree_nca( const Router *r, const Flit *f,
+        int in_channel, OutputSet* outputs, bool inject)
+{
+	int vcBegin = gBeginVCs[f->cl];
+	
+}
+
 void qtree_nca( const Router *r, const Flit *f,
 		int in_channel, OutputSet* outputs, bool inject)
 {
@@ -1996,4 +2009,7 @@ void InitializeRoutingMap( const Configuration & config )
 
   gRoutingFunctionMap["chaos_mesh"]  = &chaos_mesh;
   gRoutingFunctionMap["chaos_torus"] = &chaos_torus;
+}
+}
+}
 }

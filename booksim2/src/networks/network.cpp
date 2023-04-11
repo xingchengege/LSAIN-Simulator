@@ -47,7 +47,10 @@
 #include "fattree.hpp"
 #include "anynet.hpp"
 #include "dragonfly.hpp"
-
+#include "ckncube.hpp"
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 Network::Network( const Configuration &config, const string & name ) :
   TimedModule( 0, name )
@@ -88,8 +91,10 @@ Network * Network::New(const Configuration & config, const string & name)
     KNCube::RegisterRoutingFunctions() ;
     n = new KNCube( config, name, true );
   } else if ( topo == "cmesh" ) {
-    CMesh::RegisterRoutingFunctions() ;
-    n = new CMesh( config, name );
+    CKNCube::RegisterRoutingFunctions() ;
+    n = new CKNCube(config, name, true);
+  } else if( topo == "ckmesh" ) {
+	 
   } else if ( topo == "fly" ) {
     KNFly::RegisterRoutingFunctions() ;
     n = new KNFly( config, name );
@@ -287,4 +292,7 @@ void Network::DumpNodeMap( ostream & os, string const & prefix ) const
     os << prefix
        << _eject[s]->GetSource()->GetID() << ','
        << _inject[s]->GetSink()->GetID() << endl;
+}
+}
+}
 }

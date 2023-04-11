@@ -43,10 +43,12 @@
 #include "buffer.hpp"
 #include "buffer_state.hpp"
 #include "roundrobin_arb.hpp"
-#include "allocator.hpp"
+#include "allocators/allocator.hpp"
 #include "switch_monitor.hpp"
 #include "buffer_monitor.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 IQRouter::IQRouter( Configuration const & config, Module *parent, 
 		    string const & name, int id, int inputs, int outputs )
 : Router( config, parent, name, id, inputs, outputs ), _active(false)
@@ -2382,4 +2384,7 @@ void IQRouter::_UpdateNOQ(int input, int vc, Flit const * f) {
 		 << " (NOQ)." << endl;
     }
   }
+}
+}
+}
 }

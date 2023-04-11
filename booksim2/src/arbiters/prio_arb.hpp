@@ -32,7 +32,9 @@
 
 #include "module.hpp"
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class PriorityArbiter : public Module {
   int _rr_ptr;
 
@@ -64,5 +66,7 @@ public:
   void Arbitrate( );
   void Update( );
 };
-
+}
+}
+}
 #endif 

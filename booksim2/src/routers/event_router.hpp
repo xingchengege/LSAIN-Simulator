@@ -40,7 +40,9 @@
 #include "routefunc.hpp"
 #include "outputset.hpp"
 #include "pipefifo.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class EventNextVCState : public Module {
 public:
   enum eNextVCState { idle, busy, tail_pending };
@@ -183,5 +185,7 @@ public:
 
   void Display( ostream & os = cout ) const;
 };
-
+}
+}
+}
 #endif

@@ -33,7 +33,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Module {
 private:
   string _name;
@@ -58,5 +60,8 @@ public:
 
   virtual void Display( ostream & os = cout ) const;
 };
+}
+}
+}
 
 #endif

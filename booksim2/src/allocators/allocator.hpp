@@ -35,7 +35,9 @@
 
 #include "module.hpp"
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Allocator : public Module {
 protected:
   const int _inputs;
@@ -154,5 +156,7 @@ public:
   void PrintRequests( ostream * os = NULL ) const;
 
 };
-
+}
+}
+}
 #endif

@@ -32,7 +32,9 @@
 #include "packet_reply_info.hpp"
 #include "random_utils.hpp"
 #include "batchtrafficmanager.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 BatchTrafficManager::BatchTrafficManager( const Configuration &config, 
 					  const vector<Network *> & net )
 : TrafficManager(config, net), _last_id(-1), _last_pid(-1), 
@@ -217,4 +219,7 @@ void BatchTrafficManager::DisplayOverallStats(ostream & os) const {
      << " (" << _total_sims << " samples)" << endl
      << "Overall min batch duration = " << _overall_max_batch_time / (double)_total_sims
      << " (" << _total_sims << " samples)" << endl;
+}
+}
+}
 }

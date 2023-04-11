@@ -52,7 +52,9 @@
 #include "fattree.hpp"
 #include "misc_utils.hpp"
 
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
  //#define FATTREE_DEBUG
 
 FatTree::FatTree( const Configuration& config,const string & name )
@@ -267,4 +269,8 @@ Router*& FatTree::_Router( int depth, int pos )
 {
   assert( depth < _n && pos < powi( _k, _n-1) );
   return _routers[depth * powi( _k, _n-1) + pos];
+}
+
+}
+}
 }

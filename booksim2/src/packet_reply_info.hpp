@@ -31,7 +31,9 @@
 #include <stack>
 
 #include "flit.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 //register the requests to a node
 class PacketReplyInfo {
 
@@ -53,5 +55,7 @@ private:
   PacketReplyInfo() {}
   ~PacketReplyInfo() {}
 };
-
+}
+}
+}
 #endif

@@ -33,7 +33,9 @@
 #include <iostream>
 
 #include "maxsize.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 // shortest augmenting path:
 //
 // for all unmatched left nodes,
@@ -207,4 +209,7 @@ bool MaxSizeMatch::_ShortestAugmenting( )
 #endif
 
   return true;
+}
+}
+}
 }

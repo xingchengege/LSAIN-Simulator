@@ -35,7 +35,9 @@
 #define _SEPARABLE_OUTPUT_FIRST_HPP_
 
 #include "separable.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class SeparableOutputFirstAllocator : public SeparableAllocator {
 
 public:
@@ -46,5 +48,7 @@ public:
   virtual void Allocate() ;
 
 } ;
-
+}
+}
+}
 #endif

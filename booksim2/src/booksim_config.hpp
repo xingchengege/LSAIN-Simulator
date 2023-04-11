@@ -29,7 +29,9 @@
 #define _BOOKSIM_CONFIG_HPP_
 
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class BookSimConfig : public Configuration {
 protected:
 
@@ -49,5 +51,8 @@ public:
   PowerConfig( );
 
 };
+}
+}
+}
 
 #endif

@@ -40,7 +40,9 @@
 #include "buffer_state.hpp"
 #include "pipefifo.hpp"
 #include "vc.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class ChaosRouter : public Router {
 
   tRoutingFunction   _rf;
@@ -128,5 +130,7 @@ public:
 
   void Display( ostream & os = cout ) const;
 };
-
+}
+}
+}
 #endif

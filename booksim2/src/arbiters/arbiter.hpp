@@ -35,9 +35,10 @@
 #define _ARBITER_HPP_
 
 #include <vector>
-
 #include "module.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Arbiter : public Module {
 
 protected:
@@ -82,5 +83,7 @@ public:
   static Arbiter *NewArbiter( Module *parent, const string &name,
 			      const string &arb_type, int size );
 } ;
-
+}
+}
+}
 #endif

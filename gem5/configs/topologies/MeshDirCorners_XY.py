@@ -43,6 +43,8 @@ class MeshDirCorners_XY(SimpleTopology):
         self.nodes = controllers
 
     def makeTopology(self, options, network, IntLink, ExtLink, Router):
+        global num_numa_nodes
+        global numa_nodes
         nodes = self.nodes
 
         num_routers = options.num_cpus

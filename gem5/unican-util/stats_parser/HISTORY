@@ -1,0 +1,1 @@
+ q -HOd, "select orig.sim_name as sim_name, orig.benchmark as benchmark, (copy.stat_value/orig.stat_value) as speedup from router_comparison.csv as orig LEFT JOIN router_comparison.csv as copy ON orig.benchmark = copy.benchmark AND copy.sim_name like '%iq_router%' " > router_comparison_speedup.csv

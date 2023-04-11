@@ -43,7 +43,9 @@
 #define _QTREE_HPP_
 #include <cassert>
 #include "network.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class QTree : public Network {
 
   int _k;
@@ -65,5 +67,8 @@ public:
   static int PosFromID( int id );
 
 };
+}
+}
+}
 
 #endif 

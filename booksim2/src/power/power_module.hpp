@@ -36,7 +36,9 @@
 #include "flitchannel.hpp"
 #include "switch_monitor.hpp"
 #include "buffer_monitor.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 struct wire{
   double L;
   double K;
@@ -183,4 +185,7 @@ public:
 
 
 };
+}
+}
+}
 #endif

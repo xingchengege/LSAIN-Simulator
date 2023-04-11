@@ -37,7 +37,9 @@
 #include <vector>
 
 #include "allocator.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Arbiter;
 
 class SeparableAllocator : public SparseAllocator {
@@ -57,5 +59,7 @@ public:
   virtual void Clear() ;
 
 } ;
-
+}
+}
+}
 #endif

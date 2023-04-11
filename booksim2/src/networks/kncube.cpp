@@ -40,7 +40,9 @@
 #include "random_utils.hpp"
 #include "misc_utils.hpp"
  //#include "iq_router.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 KNCube::KNCube( const Configuration &config, const string & name, bool mesh ) :
 Network( config, name )
@@ -322,4 +324,7 @@ void KNCube::InsertRandomFaults( const Configuration &config )
 double KNCube::Capacity( ) const
 {
   return (double)_k / ( _mesh ? 8.0 : 4.0 );
+}
+}
+}
 }

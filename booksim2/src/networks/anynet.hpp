@@ -34,7 +34,9 @@
 #include <string>
 #include <map>
 #include <list>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class AnyNet : public Network {
 
   string file_name;
@@ -66,4 +68,7 @@ public:
 
 void min_anynet( const Router *r, const Flit *f, int in_channel, 
 		      OutputSet *outputs, bool inject );
+}
+}
+}
 #endif

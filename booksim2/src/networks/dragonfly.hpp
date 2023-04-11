@@ -31,6 +31,10 @@
 #include "network.hpp"
 #include "routefunc.hpp"
 
+namespace gem5{
+namespace ruby{
+namespace booksim{
+
 class DragonFlyNew : public Network {
 
   int _m;
@@ -70,5 +74,9 @@ void ugal_dragonflynew( const Router *r, const Flit *f, int in_channel,
 		       OutputSet *outputs, bool inject );
 void min_dragonflynew( const Router *r, const Flit *f, int in_channel, 
 		       OutputSet *outputs, bool inject );
+
+}
+}
+}
 
 #endif 

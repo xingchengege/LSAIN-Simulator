@@ -43,7 +43,9 @@
 #include "globals.hpp"
 #include "module.hpp"
 #include "timed_module.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std;
 
 template<typename T>
@@ -121,5 +123,7 @@ void Channel<T>::WriteOutputs() {
   assert(_output);
   _wait_queue.pop();
 }
-
+}
+}
+}
 #endif

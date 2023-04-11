@@ -50,7 +50,7 @@ def define_options(parser):
     parser.add_argument(
         "--network",
         default="simple",
-        choices=["simple", "garnet"],
+        choices=["simple", "garnet", "booksim"],
         help="""'simple'|'garnet' (garnet2.0 will be deprecated.)""",
     )
     parser.add_argument(
@@ -118,6 +118,15 @@ def define_options(parser):
         help="""SimpleNetwork links uses a separate physical
             channel for each virtual network""",
     )
+    parser.add_argument("--booksim-network", action="store_true",
+                      default=False,
+                      help="""enable booksim network:
+                            see src/mem/ruby/network/booksim.
+			    Use --booksim-config=<filename> to specify a
+                            configuration file.""")
+    parser.add_argument("--booksim-config",
+                      default="booksim.cfg",
+                     help="BookSim's configuration file.")
 
 
 def create_network(options, ruby):
@@ -139,7 +148,12 @@ def create_network(options, ruby):
         ExtLinkClass = GarnetExtLink
         RouterClass = GarnetRouter
         InterfaceClass = GarnetNetworkInterface
-
+    elif options.network == "booksim":
+        NetworkClass = BooksimNetwork
+        IntLinkClass = SimpleIntLink
+        ExtLinkClass = SimpleExtLink
+        RouterClass = NetworkSwitch
+        InterfaceClass = None
     else:
         NetworkClass = SimpleNetwork
         IntLinkClass = SimpleIntLink
@@ -261,7 +275,9 @@ def init_network(options, network, InterfaceClass):
                 )
             )
             extLink.int_cred_bridge = int_cred_bridges
-
+    if options.network == "booksim":
+            network.booksim_config = options.booksim_config
+    
     if options.network == "simple":
         if options.simple_physical_channels:
             network.physical_vnets_channels = [1] * int(

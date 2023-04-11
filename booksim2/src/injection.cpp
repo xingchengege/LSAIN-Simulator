@@ -31,7 +31,9 @@
 #include <limits>
 #include "random_utils.hpp"
 #include "injection.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std;
 
 InjectionProcess::InjectionProcess(int nodes, double rate)
@@ -187,4 +189,7 @@ bool OnOffInjectionProcess::test(int source)
 
   // generate packet
   return _state[source] && (RandomFloat() < _r1);
+}
+}
+}
 }

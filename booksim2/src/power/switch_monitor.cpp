@@ -28,7 +28,9 @@
 #include "switch_monitor.hpp"
 
 #include "flit.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 SwitchMonitor::SwitchMonitor( int inputs, int outputs, int classes )
 : _cycles(0), _inputs(inputs), _outputs(outputs), _classes(classes) {
   _event.resize(inputs * outputs * classes, 0) ;
@@ -64,4 +66,7 @@ void SwitchMonitor::display(ostream & os) const {
 ostream & operator<<( ostream & os, SwitchMonitor const & obj ) {
   obj.display(os);
   return os ;
+}
+}
+}
 }

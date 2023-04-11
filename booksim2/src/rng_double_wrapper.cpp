@@ -26,9 +26,14 @@
 */
 
 #define main rng_double_main
-#include "rng-double.c"
-
+#include "rng-double.hpp"
+namespace gem5{
+namespace ruby{
+namespace booksim{
 double ranf_next( )
 {
   return ranf_arr_next( );
+}
+}
+}
 }

@@ -32,7 +32,9 @@
 
 #include "routefunc.hpp"
 #include <cassert>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 class FlatFlyOnChip : public Network {
 
@@ -84,5 +86,9 @@ int find_ran_intm (int src, int dest);
 int flatfly_outport(int dest, int rID);
 int flatfly_transformation(int dest);
 int flatfly_outport_yx(int dest, int rID);
+
+}
+}
+}
 
 #endif

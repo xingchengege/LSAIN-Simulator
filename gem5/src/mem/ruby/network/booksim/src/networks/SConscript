@@ -1,0 +1,16 @@
+# Import('*')
+
+# if env['PROTOCOL'] == 'None':
+#     Return()
+    
+
+# Source('anynet.cpp')
+# Source('cmesh.cpp')
+# Source('dragonfly.cpp')
+# Source('fattree.cpp')
+# Source('flatfly_onchip.cpp')
+# Source('fly.cpp')
+# Source('kncube.cpp')
+# Source('network.cpp')
+# Source('qtree.cpp')
+# Source('tree4.cpp')

@@ -32,7 +32,9 @@
 #include "router.hpp"
 #include "outputset.hpp"
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 typedef void (*tRoutingFunction)( const Router *, const Flit *, int in_channel, OutputSet *, bool );
 
 void InitializeRoutingMap( const Configuration & config );
@@ -40,9 +42,14 @@ void InitializeRoutingMap( const Configuration & config );
 extern map<string, tRoutingFunction> gRoutingFunctionMap;
 
 extern int gNumVCs;
+extern int gNumClasses;
+extern vector<int> gBeginVCs;
+extern vector<int> gEndVCs;
 extern int gReadReqBeginVC, gReadReqEndVC;
 extern int gWriteReqBeginVC, gWriteReqEndVC;
 extern int gReadReplyBeginVC, gReadReplyEndVC;
 extern int gWriteReplyBeginVC, gWriteReplyEndVC;
-
+}
+}
+}
 #endif

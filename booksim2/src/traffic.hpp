@@ -31,7 +31,9 @@
 #include <vector>
 #include <set>
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std;
 
 class TrafficPattern {
@@ -170,5 +172,7 @@ public:
 			vector<int> rates = vector<int>());
   virtual int dest(int source);
 };
-
+}
+}
+}
 #endif

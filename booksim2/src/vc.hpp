@@ -35,6 +35,9 @@
 #include "routefunc.hpp"
 #include "config_utils.hpp"
 
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class VC : public Module {
 public:
   enum eVCState { state_min = 0, idle = state_min, routing, vc_alloc, active, 
@@ -133,5 +136,8 @@ public:
   bool IsWatched( ) const;
   void Display( ostream & os = cout ) const;
 };
+}
+}
+}
 
 #endif 

@@ -43,7 +43,9 @@
 #define _TREE4_HPP_
 #include <cassert>
 #include "network.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Tree4 : public Network {
 
   int _k;
@@ -68,5 +70,7 @@ public:
   static int PosFromID( int id );
   static int SpeedUp( int height );
 };
-
+}
+}
+}
 #endif

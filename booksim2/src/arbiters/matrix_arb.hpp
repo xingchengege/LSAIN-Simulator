@@ -37,7 +37,9 @@
 #include <vector>
 
 #include "arbiter.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std;
 
 class MatrixArbiter : public Arbiter {
@@ -67,5 +69,8 @@ public:
   virtual void Clear();
 
 } ;
+}
+}
+}
 
 #endif

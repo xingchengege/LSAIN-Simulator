@@ -41,7 +41,9 @@
 #include "channel.hpp"
 #include "config_utils.hpp"
 #include "globals.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 typedef Channel<Credit> CreditChannel;
 
 
@@ -113,6 +115,8 @@ public:
   Router * GetRouter(int index) {return _routers[index];}
   int NumRouters() const {return _size;}
 };
-
+}
+}
+}
 #endif 
 

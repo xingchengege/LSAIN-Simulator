@@ -28,7 +28,9 @@
 #include "random_utils.hpp"
 #include <algorithm>
 #include <cassert>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 extern long ran_x[];
 extern double ran_u[];
 #define KK 100
@@ -43,4 +45,7 @@ void RestoreRandomState( std::vector<long> const & save_x, std::vector<double> c
   std::copy(save_x.begin(), save_x.end(), ran_x);
   assert(save_u.size() == KK);
   std::copy(save_u.begin(), save_u.end(), ran_u);
+}
+}
+}
 }

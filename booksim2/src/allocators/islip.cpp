@@ -30,7 +30,9 @@
 
 #include "islip.hpp"
 #include "random_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 //#define DEBUG_ISLIP
 
 iSLIP_Sparse::iSLIP_Sparse( Module *parent, const string& name,
@@ -180,4 +182,7 @@ void iSLIP_Sparse::Allocate( )
   }
   cout << endl;
 #endif
+}
+}
+}
 }

@@ -47,6 +47,9 @@
 //==================================================
 // Allocator base class
 //==================================================
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 Allocator::Allocator( Module *parent, const string& name,
 		      int inputs, int outputs ) :
@@ -479,3 +482,6 @@ Allocator *Allocator::NewAllocator( Module *parent, const string& name,
   return a;
 }
 
+}
+}
+}

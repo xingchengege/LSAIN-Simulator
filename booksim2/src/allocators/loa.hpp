@@ -31,7 +31,9 @@
 #include <vector>
 
 #include "allocator.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class LOA : public DenseAllocator {
   vector<int> _counts;
   vector<int> _req;
@@ -45,5 +47,7 @@ public:
 
   void Allocate( );
 };
-
+}
+}
+}
 #endif

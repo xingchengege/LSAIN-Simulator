@@ -42,6 +42,9 @@
 #define _FatTree_HPP_
 
 #include "network.hpp"
+namespace gem5{
+namespace ruby{
+namespace booksim{
 
 class FatTree : public Network {
 
@@ -72,5 +75,8 @@ public:
   static int PreferedPort( const Router* r, int index );
 			 
 };
+}
+}
+}
 
 #endif

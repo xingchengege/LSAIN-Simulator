@@ -29,7 +29,9 @@
 #define _KNCUBE_HPP_
 
 #include "network.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class KNCube : public Network {
 
   bool _mesh;
@@ -58,5 +60,8 @@ public:
   void InsertRandomFaults( const Configuration &config );
 
 };
+}
+}
+}
 
 #endif

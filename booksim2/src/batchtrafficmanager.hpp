@@ -33,7 +33,9 @@
 #include "config_utils.hpp"
 #include "stats.hpp"
 #include "trafficmanager.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class BatchTrafficManager : public TrafficManager {
 
 protected:
@@ -71,5 +73,7 @@ public:
   virtual void DisplayOverallStats( ostream & os = cout ) const;
 
 };
-
+}
+}
+}
 #endif

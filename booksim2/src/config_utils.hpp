@@ -34,7 +34,9 @@
 #include<string>
 #include<map>
 #include<vector>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 extern "C" int yyparse();
 
 class Configuration {
@@ -91,5 +93,7 @@ bool ParseArgs(Configuration * cf, int argc, char **argv);
 vector<string> tokenize_str(string const & data);
 vector<int> tokenize_int(string const & data);
 vector<double> tokenize_float(string const & data);
-
+}
+}
+}
 #endif

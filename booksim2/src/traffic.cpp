@@ -30,7 +30,9 @@
 #include <ctime>
 #include "random_utils.hpp"
 #include "traffic.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 TrafficPattern::TrafficPattern(int nodes)
 : _nodes(nodes)
 {
@@ -523,4 +525,7 @@ int HotSpotTrafficPattern::dest(int source)
   }
   assert(_rates.back() > pct);
   return _hotspots.back();
+}
+}
+}
 }

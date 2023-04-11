@@ -32,7 +32,9 @@
 
 #include "booksim.hpp"
 #include "credit.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 stack<Credit *> Credit::_all;
 stack<Credit *> Credit::_free;
 
@@ -76,4 +78,7 @@ void Credit::FreeAll() {
 
 int Credit::OutStanding(){
   return _all.size()-_free.size();
+}
+}
+}
 }

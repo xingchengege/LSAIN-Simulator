@@ -33,7 +33,9 @@
 #include "booksim.hpp"
 
 #include "wavefront.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 Wavefront::Wavefront( Module *parent, const string& name,
 		      int inputs, int outputs, bool skip_diags ) :
   DenseAllocator( parent, name, inputs, outputs ),
@@ -107,5 +109,7 @@ void Wavefront::Allocate( )
   // Round-robin the priority diagonal
   _pri = ( ( _skip_diags ? first_diag : _pri ) + 1 ) % _square;
 }
-
+}
+}
+}
 

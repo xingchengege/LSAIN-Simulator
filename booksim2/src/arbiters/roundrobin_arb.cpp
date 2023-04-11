@@ -34,7 +34,9 @@
 #include "roundrobin_arb.hpp"
 #include <iostream>
 #include <limits>
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std ;
 
 RoundRobinArbiter::RoundRobinArbiter( Module *parent, const string &name,
@@ -77,4 +79,7 @@ void RoundRobinArbiter::Clear()
   _highest_pri = numeric_limits<int>::min();
   _best_input = -1;
   Arbiter::Clear();
+}
+}
+}
 }

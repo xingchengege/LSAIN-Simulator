@@ -48,7 +48,9 @@
 #include "event_router.hpp"
 #include "chaos_router.hpp"
 ///////////////////////////////////////////////////////
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 int const Router::STALL_BUFFER_BUSY = -2;
 int const Router::STALL_BUFFER_CONFLICT = -3;
 int const Router::STALL_BUFFER_FULL = -4;
@@ -148,7 +150,9 @@ Router *Router::NewRouter( const Configuration& config,
 
   return r;
 }
-
+}
+}
+}
 
 
 

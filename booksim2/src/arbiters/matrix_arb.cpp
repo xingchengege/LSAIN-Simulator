@@ -33,6 +33,9 @@
 
 #include "matrix_arb.hpp"
 #include <iostream>
+namespace gem5{
+namespace ruby{
+namespace booksim{
 using namespace std ;
 
 MatrixArbiter::MatrixArbiter( Module *parent, const string &name, int size )
@@ -118,4 +121,8 @@ void MatrixArbiter::Clear()
 {
   _last_req = -1;
   Arbiter::Clear();
+}
+
+}
+}
 }

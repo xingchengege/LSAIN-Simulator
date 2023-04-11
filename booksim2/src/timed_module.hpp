@@ -29,7 +29,9 @@
 #define _TIMED_MODULE_HPP_
 
 #include "module.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class TimedModule : public Module {
 
 public:
@@ -40,5 +42,7 @@ public:
   virtual void Evaluate() = 0;
   virtual void WriteOutputs() = 0;
 };
-
+}
+}
+}
 #endif

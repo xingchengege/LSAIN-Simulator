@@ -35,7 +35,9 @@
 #include "outputset.hpp"
 #include "routefunc.hpp"
 #include "config_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Buffer : public Module {
   
   int _occupancy;
@@ -157,5 +159,7 @@ public:
 
   void Display( ostream & os = cout ) const;
 };
-
+}
+}
+}
 #endif 

@@ -28,7 +28,9 @@
 #include "buffer_monitor.hpp"
 
 #include "flit.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 BufferMonitor::BufferMonitor( int inputs, int classes ) 
 : _cycles(0), _inputs(inputs), _classes(classes) {
   _reads.resize(inputs * classes, 0) ;
@@ -68,4 +70,8 @@ void BufferMonitor::display(ostream & os) const {
 ostream & operator<<( ostream & os, BufferMonitor const & obj ) {
   obj.display(os);
   return os ;
+}
+
+}
+}
 }

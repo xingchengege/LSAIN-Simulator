@@ -29,7 +29,9 @@
 #define _STATS_HPP_
 
 #include "module.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class Stats : public Module {
   int    _num_samples;
   double _sample_sum;
@@ -58,9 +60,15 @@ public:
   double SquaredSum( ) const;
   int    NumSamples( ) const;
 
-  void AddSample( double val );
+  void AddSample( long double val );
   inline void AddSample( int val ) {
-    AddSample( (double)val );
+    AddSample( (long double)val );
+  }
+  inline void AddSample( long val ){
+	AddSample( (long double)val );
+  }
+  inline void AddSample( long long val ){
+	AddSample( (long double)val );
   }
 
   int GetBin(int b){ return _hist[b];}
@@ -72,5 +80,7 @@ public:
 };
 
 ostream & operator<<(ostream & os, const Stats & s);
-
+}
+}
+}
 #endif

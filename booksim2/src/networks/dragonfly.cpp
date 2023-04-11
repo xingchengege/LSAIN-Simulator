@@ -34,7 +34,9 @@
 #include "random_utils.hpp"
 #include "misc_utils.hpp"
 #include "globals.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 #define DRAGON_LATENCY
 
 int gP, gA, gG;
@@ -559,4 +561,8 @@ void ugal_dragonflynew( const Router *r, const Flit *f, int in_channel,
   out_vc = f->ph;
 
   outputs->AddRange( out_port, out_vc, out_vc );
+}
+
+}
+}
 }

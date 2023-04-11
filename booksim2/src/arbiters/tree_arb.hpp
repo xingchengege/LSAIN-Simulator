@@ -35,7 +35,9 @@
 #define _TREE_ARB_HPP_
 
 #include "arbiter.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 class TreeArbiter : public Arbiter {
 
   int  _group_size ;
@@ -67,5 +69,7 @@ public:
   virtual void Clear();
 
 } ;
-
+}
+}
+}
 #endif

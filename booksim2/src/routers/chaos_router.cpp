@@ -34,7 +34,9 @@
 #include "chaos_router.hpp"
 #include "random_utils.hpp"
 #include "globals.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 ChaosRouter::ChaosRouter( const Configuration& config,
 		    Module *parent, const string & name, int id,
 		    int inputs, int outputs )
@@ -670,4 +672,8 @@ void ChaosRouter::_SendCredits( )
 
 void ChaosRouter::Display( ostream & os ) const
 {
+}
+
+}
+}
 }

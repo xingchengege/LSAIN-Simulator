@@ -44,7 +44,9 @@
 #include <sstream>
 #include "qtree.hpp"
 #include "misc_utils.hpp"
-
+namespace gem5{
+namespace ruby{
+namespace booksim{
 QTree::QTree( const Configuration& config, const string & name )
 : Network ( config, name )
 {
@@ -182,4 +184,7 @@ int QTree::HeightFromID( int id )
 int QTree::PosFromID( int id )
 {
   return id % 256;
+}
+}
+}
 }
