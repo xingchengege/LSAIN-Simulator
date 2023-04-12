@@ -26,6 +26,7 @@ namespace booksim{
 			long _sameple_period;
 
 			long _last_print;
+
 		public:
 		   TrafficManagerWrapper(const Configuration &config,
 		                         const vector<Network *> &net

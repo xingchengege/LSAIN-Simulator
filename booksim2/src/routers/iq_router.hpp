@@ -71,14 +71,14 @@ class IQRouter : public Router {
   
   map<int, Flit *> _in_queue_flits;
 
-  deque<pair<int, pair<Credit *, int> > > _proc_credits;
+  deque<pair<long long, pair<Credit *, int> > > _proc_credits;
 
-  deque<pair<int, pair<int, int> > > _route_vcs;
-  deque<pair<int, pair<pair<int, int>, int> > > _vc_alloc_vcs;  
-  deque<pair<int, pair<pair<int, int>, int> > > _sw_hold_vcs;
-  deque<pair<int, pair<pair<int, int>, int> > > _sw_alloc_vcs;
+  deque<pair<long long, pair<int, int> > > _route_vcs;
+  deque<pair<long long, pair<pair<int, int>, int> > > _vc_alloc_vcs;  
+  deque<pair<long long, pair<pair<int, int>, int> > > _sw_hold_vcs;
+  deque<pair<long long, pair<pair<int, int>, int> > > _sw_alloc_vcs;
 
-  deque<pair<int, pair<Flit *, pair<int, int> > > > _crossbar_flits;
+  deque<pair<long long, pair<Flit *, pair<int, int> > > > _crossbar_flits;
 
   map<int, Credit *> _out_queue_credits;
 

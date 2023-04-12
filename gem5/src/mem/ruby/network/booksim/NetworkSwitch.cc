@@ -144,6 +144,12 @@ namespace booksim
 								Cycles inject_cycle = curCycle() - ticksToCycles(
 									                        msg_ptr->getTime()
 								                        );
+								// DPRINTF(Booksim, "GeneratePacket:\n m_id: %d packet_dest: %d size: %d packet_class %d inject_cycle: %d!\n",
+								//                             m_id,
+								// 							packet_dest,
+								// 							size,
+								// 							packet_class,
+								// 							inject_cycle);
 								int pid = m_wrapper_ptr->GeneratePacket(
 									                        m_id,
 															packet_dest,
@@ -151,6 +157,7 @@ namespace booksim
 															packet_class,
 															inject_cycle
 								                        );
+								// DPRINTF(Booksim, "GeneratePacket is done!\n");
 								if(pid > -1)
 								{
 									msg_dest.removeNetDest(personal_dest);

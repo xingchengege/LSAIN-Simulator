@@ -45,10 +45,10 @@ extern int gNumVCs;
 extern int gNumClasses;
 extern vector<int> gBeginVCs;
 extern vector<int> gEndVCs;
-extern int gReadReqBeginVC, gReadReqEndVC;
-extern int gWriteReqBeginVC, gWriteReqEndVC;
-extern int gReadReplyBeginVC, gReadReplyEndVC;
-extern int gWriteReplyBeginVC, gWriteReplyEndVC;
+// extern int gReadReqBeginVC, gReadReqEndVC;
+// extern int gWriteReqBeginVC, gWriteReqEndVC;
+// extern int gReadReplyBeginVC, gReadReplyEndVC;
+// extern int gWriteReplyBeginVC, gWriteReplyEndVC;
 }
 }
 }

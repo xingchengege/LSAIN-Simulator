@@ -643,7 +643,7 @@ void BufferState::SendingFlit( Flit const * const f )
     _tail_sent[vc] = true;
     
     if ( !_wait_for_tail_credit ) {
-      assert(_in_use_by[vc] >= 0);
+    //   assert(_in_use_by[vc] >= 0);
       _in_use_by[vc] = -1;
     }
   }
@@ -651,7 +651,7 @@ void BufferState::SendingFlit( Flit const * const f )
   _last_pid[vc] = f->pid;
 }
 
-void BufferState::TakeBuffer( int vc, int tag )
+void BufferState::TakeBuffer( int vc, long tag )
 {
   assert( ( vc >= 0 ) && ( vc < _vcs ) );
 

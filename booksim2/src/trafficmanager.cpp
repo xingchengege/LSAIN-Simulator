@@ -72,12 +72,12 @@ TrafficManager::TrafficManager( const Configuration &config, const vector<Networ
     _vcs = config.GetInt("num_vcs");
     _subnets = config.GetInt("subnets");
  
-    _subnet.resize(Flit::NUM_FLIT_TYPES);
-    _subnet[Flit::READ_REQUEST] = config.GetInt("read_request_subnet");
-    _subnet[Flit::READ_REPLY] = config.GetInt("read_reply_subnet");
-    _subnet[Flit::WRITE_REQUEST] = config.GetInt("write_request_subnet");
-    _subnet[Flit::WRITE_REPLY] = config.GetInt("write_reply_subnet");
-
+    // _subnet.resize(Flit::NUM_FLIT_TYPES);
+    // _subnet[Flit::READ_REQUEST] = config.GetInt("read_request_subnet");
+    // _subnet[Flit::READ_REPLY] = config.GetInt("read_reply_subnet");
+    // _subnet[Flit::WRITE_REQUEST] = config.GetInt("write_request_subnet");
+    // _subnet[Flit::WRITE_REPLY] = config.GetInt("write_reply_subnet");
+	
     // ============ Message priorities ============ 
 
     string priority = config.GetStr( "priority" );
@@ -123,121 +123,17 @@ TrafficManager::TrafficManager( const Configuration &config, const vector<Networ
 
     _classes = config.GetInt("classes");
 
-    _use_read_write = config.GetIntArray("use_read_write");
-    if(_use_read_write.empty()) {
-        _use_read_write.push_back(config.GetInt("use_read_write"));
-    }
-    _use_read_write.resize(_classes, _use_read_write.back());
-
-    _write_fraction = config.GetFloatArray("write_fraction");
-    if(_write_fraction.empty()) {
-        _write_fraction.push_back(config.GetFloat("write_fraction"));
-    }
-    _write_fraction.resize(_classes, _write_fraction.back());
-
-    _read_request_size = config.GetIntArray("read_request_size");
-    if(_read_request_size.empty()) {
-        _read_request_size.push_back(config.GetInt("read_request_size"));
-    }
-    _read_request_size.resize(_classes, _read_request_size.back());
-
-    _read_reply_size = config.GetIntArray("read_reply_size");
-    if(_read_reply_size.empty()) {
-        _read_reply_size.push_back(config.GetInt("read_reply_size"));
-    }
-    _read_reply_size.resize(_classes, _read_reply_size.back());
-
-    _write_request_size = config.GetIntArray("write_request_size");
-    if(_write_request_size.empty()) {
-        _write_request_size.push_back(config.GetInt("write_request_size"));
-    }
-    _write_request_size.resize(_classes, _write_request_size.back());
-
-    _write_reply_size = config.GetIntArray("write_reply_size");
-    if(_write_reply_size.empty()) {
-        _write_reply_size.push_back(config.GetInt("write_reply_size"));
-    }
-    _write_reply_size.resize(_classes, _write_reply_size.back());
-
-    string packet_size_str = config.GetStr("packet_size");
-    if(packet_size_str.empty()) {
-        _packet_size.push_back(vector<int>(1, config.GetInt("packet_size")));
-    } else {
-        vector<string> packet_size_strings = tokenize_str(packet_size_str);
-        for(size_t i = 0; i < packet_size_strings.size(); ++i) {
-            _packet_size.push_back(tokenize_int(packet_size_strings[i]));
-        }
-    }
-    _packet_size.resize(_classes, _packet_size.back());
-
-    string packet_size_rate_str = config.GetStr("packet_size_rate");
-    if(packet_size_rate_str.empty()) {
-        int rate = config.GetInt("packet_size_rate");
-        assert(rate >= 0);
-        for(int c = 0; c < _classes; ++c) {
-            int size = _packet_size[c].size();
-            _packet_size_rate.push_back(vector<int>(size, rate));
-            _packet_size_max_val.push_back(size * rate - 1);
-        }
-    } else {
-        vector<string> packet_size_rate_strings = tokenize_str(packet_size_rate_str);
-        packet_size_rate_strings.resize(_classes, packet_size_rate_strings.back());
-        for(int c = 0; c < _classes; ++c) {
-            vector<int> rates = tokenize_int(packet_size_rate_strings[c]);
-            rates.resize(_packet_size[c].size(), rates.back());
-            _packet_size_rate.push_back(rates);
-            int size = rates.size();
-            int max_val = -1;
-            for(int i = 0; i < size; ++i) {
-                int rate = rates[i];
-                assert(rate >= 0);
-                max_val += rate;
-            }
-            _packet_size_max_val.push_back(max_val);
-        }
-    }
-  
-    for(int c = 0; c < _classes; ++c) {
-        if(_use_read_write[c]) {
-            _packet_size[c] = 
-                vector<int>(1, (_read_request_size[c] + _read_reply_size[c] +
-                                _write_request_size[c] + _write_reply_size[c]) / 2);
-            _packet_size_rate[c] = vector<int>(1, 1);
-            _packet_size_max_val[c] = 0;
-        }
-    }
-
-    _load = config.GetFloatArray("injection_rate"); 
-    if(_load.empty()) {
-        _load.push_back(config.GetFloat("injection_rate"));
-    }
-    _load.resize(_classes, _load.back());
-
-    if(config.GetInt("injection_rate_uses_flits")) {
-        for(int c = 0; c < _classes; ++c)
-            _load[c] /= _GetAveragePacketSize(c);
-    }
-
-    _traffic = config.GetStrArray("traffic");
-    _traffic.resize(_classes, _traffic.back());
-
-    _traffic_pattern.resize(_classes);
+	_subnet = config.GetIntArray("subnet");
+	if(_subnet.empty()){
+		_subnet.push_back(config.GetInt("subnet"));
+	}
+	_subnet.resize(_classes, _subnet.back());
 
     _class_priority = config.GetIntArray("class_priority"); 
     if(_class_priority.empty()) {
         _class_priority.push_back(config.GetInt("class_priority"));
     }
     _class_priority.resize(_classes, _class_priority.back());
-
-    vector<string> injection_process = config.GetStrArray("injection_process");
-    injection_process.resize(_classes, injection_process.back());
-
-    _injection_process.resize(_classes);
-
-    for(int c = 0; c < _classes; ++c) {
-        _traffic_pattern[c] = TrafficPattern::New(_traffic[c], _nodes, &config);
-        _injection_process[c] = InjectionProcess::New(injection_process[c], _nodes, _load[c], &config);
-    }
 
     // ============ Injection VC states  ============ 
 
@@ -259,7 +155,7 @@ TrafficManager::TrafficManager( const Configuration &config, const vector<Networ
             int min_latency = 1 + _net[subnet]->GetInject(source)->GetLatency() + router_latency + _net[subnet]->GetInjectCred(source)->GetLatency();
             bs->SetMinLatency(min_latency);
             _buf_states[source][subnet] = bs;
-            _last_vc[source][subnet].resize(_classes, -1);
+            _last_vc[source][subnet] = gEndVCs;
         }
     }
 
@@ -276,13 +172,10 @@ TrafficManager::TrafficManager( const Configuration &config, const vector<Networ
 
     // ============ Injection queues ============ 
 
-    _qtime.resize(_nodes);
-    _qdrained.resize(_nodes);
+	 _injection_queues = config.GetInt("injection_queues");
     _partial_packets.resize(_nodes);
 
     for ( int s = 0; s < _nodes; ++s ) {
-        _qtime[s].resize(_classes);
-        _qdrained[s].resize(_classes);
         _partial_packets[s].resize(_classes);
     }
 
@@ -291,7 +184,6 @@ TrafficManager::TrafficManager( const Configuration &config, const vector<Networ
     _retired_packets.resize(_classes);
 
     _packet_seq_no.resize(_nodes);
-    _repliesPending.resize(_nodes);
     _requestsOutstanding.resize(_nodes);
 
     _hold_switch_for_packet = config.GetInt("hold_switch_for_packet");
@@ -609,8 +501,7 @@ TrafficManager::~TrafficManager( )
         delete _frag_stats[c];
         delete _hop_stats[c];
 
-        delete _traffic_pattern[c];
-        delete _injection_process[c];
+      
         if(_pair_stats){
             for ( int i = 0; i < _nodes; ++i ) {
                 for ( int j = 0; j < _nodes; ++j ) {
@@ -658,7 +549,7 @@ void TrafficManager::_RetireFlit( Flit *f, int dest )
         assert(_measured_in_flight_flits[f->cl].count(f->id) > 0);
         _measured_in_flight_flits[f->cl].erase(f->id);
     }
-
+	
     if ( f->watch ) { 
         *gWatchOut << GetSimTime() << " | "
                    << "node" << dest << " | "
@@ -690,7 +581,7 @@ void TrafficManager::_RetireFlit( Flit *f, int dest )
         if(f->head) {
             head = f;
         } else {
-            map<int, Flit *>::iterator iter = _retired_packets[f->cl].find(f->pid);
+            map<long, Flit *>::iterator iter = _retired_packets[f->cl].find(f->pid);
             assert(iter != _retired_packets[f->cl].end());
             head = iter->second;
             _retired_packets[f->cl].erase(iter);
@@ -708,8 +599,9 @@ void TrafficManager::_RetireFlit( Flit *f, int dest )
                        << ", dest = " << head->dest
                        << ")." << endl;
         }
-
+		// cout<<"doing _RetirePacket!"<<endl;
 		_RetirePacket(head, f);
+		// cout<<"_RetirePacket done!"<<endl;
 
         // Only record statistics once per packet (at tail)
         // and based on the simulation state
@@ -756,12 +648,20 @@ void TrafficManager::_RetirePacket(Flit *head, Flit *tail)
 long TrafficManager::_GeneratePacket( int source, int dest, int size, 
                                       int cl, long long time )
 {
-
+	// cout<<"TrafficManager: _GeneratePacket!"<<endl;
+	if(_partial_packets[source][cl].size() >=_inj_size)
+	{
+	    return -1;
+	}
+	if(dest == -1)
+	{
+		return -1;
+	}
     long pid = _cur_pid++;
     assert(_cur_pid);
     bool record = false;
     bool watch = gWatchOut && (_packets_to_watch.count(pid) > 0);
-    
+    // cout << _nodes<<' '<<_classes<<' '<<source<<' '<<cl<<endl;
     if ( ( _sim_state == running ) ||
          ( ( _sim_state == draining ) && ( time < _drain_time ) ) ) {
         record = _measure_stats[cl];
@@ -774,7 +674,6 @@ long TrafficManager::_GeneratePacket( int source, int dest, int size,
                    << " at time " << time
                    << "." << endl;
     }
-  
     for ( int i = 0; i < size; ++i ) {
         Flit * f  = Flit::New();
         f->id     = _cur_id++;
@@ -786,7 +685,7 @@ long TrafficManager::_GeneratePacket( int source, int dest, int size,
         f->ctime  = time;
         f->record = record;
         f->cl     = cl;
-		f->vc  = -1;
+		f->vc     = -1;
 		f->head   = (i == 0);
 		f->tail   = (i == (size-1) );
 		f->packet_size = size;
@@ -839,7 +738,10 @@ void TrafficManager::_Step( )
         flits_in_flight |= !_total_in_flight_flits[c].empty();
     }
     if(flits_in_flight && (_deadlock_timer++ >= _deadlock_warn_timeout)){
-        _deadlock_timer = 0;
+        for (int subnet = 0; subnet < _subnets; ++subnet) {
+            _net[subnet]->Display(std::cout);
+        }
+		_deadlock_timer = 0;
         cout << "WARNING: Possible network deadlock.\n";
     }
 
@@ -885,10 +787,10 @@ void TrafficManager::_Step( )
         _net[subnet]->ReadInputs( );
     }
   
-    if ( !_empty_network ) {
-        _Inject();
-    }
-
+    // if ( !_empty_network ) {
+    //     _Inject();
+    // }
+	// cout<<"Ejecting flit is done!"<<endl;
     for(int subnet = 0; subnet < _subnets; ++subnet) {
 
         for(int n = 0; n < _nodes; ++n) {
@@ -918,6 +820,10 @@ void TrafficManager::_Step( )
 
                 int const c = (last_class + i) % _classes;
 
+				if(_subnet[c] != subnet){
+					continue;
+				}
+
                 list<Flit *> const & pp = _partial_packets[n][c];
 
                 if(pp.empty()) {
@@ -927,11 +833,9 @@ void TrafficManager::_Step( )
                 Flit * const cf = pp.front();
                 assert(cf);
                 assert(cf->cl == c);
-	
-                if(cf->subnetwork != subnet) {
-                    continue;
-                }
 
+				
+                
                 if(f && (f->pri >= cf->pri)) {
                     continue;
                 }
@@ -1011,7 +915,7 @@ void TrafficManager::_Step( )
                         }
                     }
                 }
-	
+				if(cf->id == 0) cout<<cf->vc<<endl;
                 if(cf->vc == -1) {
                     if(cf->watch) {
                         *gWatchOut << GetSimTime() << " | " << FullName() << " | "
@@ -1062,7 +966,7 @@ void TrafficManager::_Step( )
                         f->la_route_set.Clear();
                     }
 
-                    dest_buf->TakeBuffer(f->vc);
+                    dest_buf->TakeBuffer(f->vc, f->pid);
                     _last_vc[n][subnet][c] = f->vc;
                 }
 	
@@ -1115,6 +1019,7 @@ void TrafficManager::_Step( )
             }
         }
     }
+	// cout<<"Routing flit is done!"<<endl;
 
     for(int subnet = 0; subnet < _subnets; ++subnet) {
         for(int n = 0; n < _nodes; ++n) {
@@ -1138,14 +1043,18 @@ void TrafficManager::_Step( )
 #ifdef TRACK_FLOWS
                 ++_ejected_flits[f->cl][n];
 #endif
-	
+	            // cout<<"doing _RetireFlit!"<<endl;
                 _RetireFlit(f, n);
+				// cout<<"_RetireFlit done!"<<endl;
             }
         }
         flits[subnet].clear();
+		// cout<<"doing net evaluate!"<<endl;
         _net[subnet]->Evaluate( );
+		// cout<<"net evaluate is done!"<<endl;
         _net[subnet]->WriteOutputs( );
     }
+	// cout<<"Update inflight flit is done!"<<endl;
 
     ++_time;
     assert(_time);
@@ -1158,25 +1067,25 @@ void TrafficManager::_Step( )
 bool TrafficManager::_PacketsOutstanding( ) const
 {
     for ( int c = 0; c < _classes; ++c ) {
-        if ( _measure_stats[c] ) {
+        // if ( _measure_stats[c] ) {
             if ( _measured_in_flight_flits[c].empty() ) {
 	
-                for ( int s = 0; s < _nodes; ++s ) {
-                    if ( !_qdrained[s][c] ) {
-#ifdef DEBUG_DRAIN
-                        cout << "waiting on queue " << s << " class " << c;
-                        cout << ", time = " << _time << " qtime = " << _qtime[s][c] << endl;
-#endif
-                        return true;
-                    }
-                }
-            } else {
-#ifdef DEBUG_DRAIN
-                cout << "in flight = " << _measured_in_flight_flits[c].size() << endl;
-#endif
+//                 for ( int s = 0; s < _nodes; ++s ) {
+//                     if ( !_qdrained[s][c] ) {
+// #ifdef DEBUG_DRAIN
+//                         cout << "waiting on queue " << s << " class " << c;
+//                         cout << ", time = " << _time << " qtime = " << _qtime[s][c] << endl;
+// #endif
+//                         return true;
+//                     }
+//                 }
+//             } else {
+// #ifdef DEBUG_DRAIN
+//                 cout << "in flight = " << _measured_in_flight_flits[c].size() << endl;
+// #endif
                 return true;
             }
-        }
+        // }
     }
     return false;
 }
@@ -1265,7 +1174,7 @@ void TrafficManager::_DisplayRemaining( ostream & os ) const
 {
     for(int c = 0; c < _classes; ++c) {
 
-        map<int, Flit *>::const_iterator iter;
+        map<long, Flit *>::const_iterator iter;
         int i;
 
         os << "Class " << c << ":" << endl;
@@ -1304,31 +1213,31 @@ bool TrafficManager::Run( )
 
         //remove any pending request from the previous simulations
         _requestsOutstanding.assign(_nodes, 0);
-        for (int i=0;i<_nodes;i++) {
-            while(!_repliesPending[i].empty()) {
-                _repliesPending[i].front()->Free();
-                _repliesPending[i].pop_front();
-            }
-        }
+        // for (int i=0;i<_nodes;i++) {
+        //     while(!_repliesPending[i].empty()) {
+        //         _repliesPending[i].front()->Free();
+        //         _repliesPending[i].pop_front();
+        //     }
+        // }
 
         //reset queuetime for all sources
-        for ( int s = 0; s < _nodes; ++s ) {
-            _qtime[s].assign(_classes, 0);
-            _qdrained[s].assign(_classes, false);
-        }
+        // for ( int s = 0; s < _nodes; ++s ) {
+        //     _qtime[s].assign(_classes, 0);
+        //     _qdrained[s].assign(_classes, false);
+        // }
 
         // warm-up ...
         // reset stats, all packets after warmup_time marked
         // converge
         // draing, wait until all packets finish
-        _sim_state    = warming_up;
+        // _sim_state    = warming_up;
   
         _ClearStats( );
 
-        for(int c = 0; c < _classes; ++c) {
-            _traffic_pattern[c]->reset();
-            _injection_process[c]->reset();
-        }
+        // for(int c = 0; c < _classes; ++c) {
+        //     _traffic_pattern[c]->reset();
+        //     _injection_process[c]->reset();
+        // }
 
         if ( !_SingleSim( ) ) {
             cout << "Simulation unstable, ending ..." << endl;
@@ -1864,9 +1773,10 @@ void TrafficManager::DisplayOverallStats( ostream & os ) const {
 string TrafficManager::_OverallStatsCSV(int c) const
 {
     ostringstream os;
-    os << _traffic[c]
-       << ',' << _use_read_write[c]
-       << ',' << _load[c]
+     os 
+	//  << _traffic[c]
+    //    << ',' << _use_read_write[c]
+    //    << ',' << _load[c]
        << ',' << _overall_min_plat[c] / (double)_total_sims
        << ',' << _overall_avg_plat[c] / (double)_total_sims
        << ',' << _overall_max_plat[c] / (double)_total_sims

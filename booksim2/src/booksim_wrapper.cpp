@@ -12,14 +12,14 @@ namespace booksim{
 	class Stats;
 
 	/**/
-	TrafficManager* trafficMananger = NULL;
+	TrafficManager* trafficManager = NULL;
 
 	long long GetSimTime(){
-		return trafficMananger->getTime();
+		return trafficManager->getTime();
 	}
 
 	Stats * GetStats(const std::string & name){
-		Stats* test = trafficMananger->getStats(name);
+		Stats* test = trafficManager->getStats(name);
 		if(test == 0){
 			cout<<"warning statistics "<<name<<" not found"<<endl;
 		}
@@ -71,9 +71,10 @@ namespace booksim{
 			name << "network_" << i;
 			nets[i] = Network::New(config, name.str());
 		}
-
 		//初始化TrafficManager
 		_traffic_manager = new TrafficManagerWrapper(config, nets);
+
+		trafficManager = _traffic_manager;
 	}
 
 	BooksimWrapper::~BooksimWrapper()
@@ -124,6 +125,24 @@ namespace booksim{
 		return _retired_packets;
 	}
 	
+	RetiredPacket
+	BooksimWrapper::RetirePacket()
+	{
+		pair<Flit,Flit> rp = _traffic_manager->RetirePacket();
+		Flit head = rp.first;
+		Flit tail = rp.second;
+		RetiredPacket p = {head.pid,
+		                   head.src,
+						   head.dest,
+						   head.cl,
+						   head.packet_size,
+						   (int)(tail.atime - head.ctime),
+						   (int)(tail.atime - head.itime),
+						   head.hops
+						   };
+		return p;
+	}
+
 	bool
 	BooksimWrapper::CheckInFlightPackets()
 	{

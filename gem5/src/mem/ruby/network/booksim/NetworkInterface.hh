@@ -6,6 +6,7 @@
 
 
 #include "mem/ruby/network/MessageBuffer.hh"
+#include "debug/Booksim.hh"
 
 namespace gem5
 {

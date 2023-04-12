@@ -221,22 +221,22 @@ void min_anynet( const Router *r, const Flit *f, int in_channel,
     assert(global_routing_table[r->GetID()].count(f->dest)!=0);
     out_port=global_routing_table[r->GetID()][f->dest];
   }
- 
-
-  int vcBegin = 0, vcEnd = gNumVCs-1;
-  if ( f->type == Flit::READ_REQUEST ) {
-    vcBegin = gReadReqBeginVC;
-    vcEnd   = gReadReqEndVC;
-  } else if ( f->type == Flit::WRITE_REQUEST ) {
-    vcBegin = gWriteReqBeginVC;
-    vcEnd   = gWriteReqEndVC;
-  } else if ( f->type ==  Flit::READ_REPLY ) {
-    vcBegin = gReadReplyBeginVC;
-    vcEnd   = gReadReplyEndVC;
-  } else if ( f->type ==  Flit::WRITE_REPLY ) {
-    vcBegin = gWriteReplyBeginVC;
-    vcEnd   = gWriteReplyEndVC;
-  }
+  int vcBegin = gBeginVCs[f->cl];
+  int vcEnd = gEndVCs[f->cl];
+//   int vcBegin = 0, vcEnd = gNumVCs-1;
+//   if ( f->type == Flit::READ_REQUEST ) {
+//     vcBegin = gReadReqBeginVC;
+//     vcEnd   = gReadReqEndVC;
+//   } else if ( f->type == Flit::WRITE_REQUEST ) {
+//     vcBegin = gWriteReqBeginVC;
+//     vcEnd   = gWriteReqEndVC;
+//   } else if ( f->type ==  Flit::READ_REPLY ) {
+//     vcBegin = gReadReplyBeginVC;
+//     vcEnd   = gReadReplyEndVC;
+//   } else if ( f->type ==  Flit::WRITE_REPLY ) {
+//     vcBegin = gWriteReplyBeginVC;
+//     vcEnd   = gWriteReplyEndVC;
+//   }
 
   outputs->Clear( );
 

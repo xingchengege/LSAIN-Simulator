@@ -49,6 +49,9 @@ BookSimConfig::BookSimConfig( )
   // Physical sub-networks
   _int_map["subnets"] = 1;
 
+  _int_map["subnet"] = 0;
+  AddStrField("subnet", ""); // workaraound to allow for vector specification
+
   //==== Topology options =======================
   AddStrField( "topology", "torus" );
   _int_map["k"] = 8; //network radix
@@ -101,6 +104,7 @@ BookSimConfig::BookSimConfig( )
   //==== Input-queued ======================================
 
   _int_map["injection_queues"] = 1;
+  
   _int_map["injection_queue_size"] = 1000;
   // Control of virtual channel speculation
   _int_map["speculative"] = 0 ;

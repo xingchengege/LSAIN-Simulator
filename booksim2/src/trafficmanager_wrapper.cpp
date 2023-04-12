@@ -32,6 +32,7 @@ namespace booksim
 										  int cl,
 										  long long time)
 	{
+		// cout<<"TrafficManagerWrapper: GeneratePacket!"<<endl;
 		return _GeneratePacket(source, dest, size, cl, GetSimTime() - time);
 	}
 	
@@ -39,14 +40,13 @@ namespace booksim
 	TrafficManagerWrapper::_RetirePacket(Flit * head, Flit *tail)
 	{
 		TrafficManager::_RetirePacket(head, tail);
-		
-		_ejection_queue[head->dest][head->cl].push(make_pair(*head, *tail));
+		_ejection_queue[head->cl][head->dest].push(make_pair(*head, *tail));
 	}
 
 	void 
 	TrafficManagerWrapper::RunCycles(int cycles)
 	{
-		for(int i=0;i<cycles;i++){
+		for(int i = 0; i < cycles; i++){
 			_Step();
 		}
 		if(_print_csv_results && _sample_period < GetSimTime() - _last_print)
@@ -70,12 +70,12 @@ namespace booksim
 			in_flight_packets |= !_total_in_flight_flits[cl].empty();
 
 			if(in_flight_packets)
-			{
 				break;
-			}
 
-			for(int n=0; n < _nodes; n++){
+			for(int n = 0; n < _nodes; n++){
 				in_flight_packets |= ! _ejection_queue[cl][n].empty();
+				if(in_flight_packets)
+				   break;
 			}
 		}
 		return in_flight_packets;

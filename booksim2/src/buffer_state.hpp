@@ -191,7 +191,7 @@ public:
   void ProcessCredit( Credit const * const c );
   void SendingFlit( Flit const * const f );
 
-  void TakeBuffer( int vc = 0, int tag = 0 );
+  void TakeBuffer( int vc = 0, long tag = 0 );
 
   inline bool IsFull() const {
     assert(_occupancy <= _size);

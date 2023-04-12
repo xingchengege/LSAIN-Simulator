@@ -31,6 +31,7 @@ namespace booksim
 		_number_switches = m_switches.size();
 
 		m_booksim_wrapper = new BooksimWrapper(p.booksim_config);
+		// DPRINTF(Booksim, "BooksimNetwork is ok!\n");
 	}
 
 	void
@@ -139,15 +140,18 @@ namespace booksim
 	void
 	BooksimNetwork::RunCycles(int cycles)
 	{
+		
 		incTotalCycles();
 
 		for (int i = 0; i < m_switches.size(); i++){
 			m_switches[i]->ReadMessage();
 		}
-
+		
+		// DPRINTF(Booksim, "ReadMessage is done!\n");
 		m_booksim_wrapper->RunCycles(cycles);
-
+		// DPRINTF(Booksim, "RunCycles is done!\n");
 		RetirePackets();
+		// DPRINTF(Booksim, "RetirePackets is done!\n");
 	}
 	bool 
 	BooksimNetwork::functionalRead(Packet* pkt)

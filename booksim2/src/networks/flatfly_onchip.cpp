@@ -335,20 +335,22 @@ void adaptive_xyyx_flatfly( const Router *r, const Flit *f, int in_channel,
 		  OutputSet *outputs, bool inject )
 { 
   // ( Traffic Class , Routing Order ) -> Virtual Channel Range
-  int vcBegin = 0, vcEnd = gNumVCs-1;
-  if ( f->type == Flit::READ_REQUEST ) {
-    vcBegin = gReadReqBeginVC;
-    vcEnd = gReadReqEndVC;
-  } else if ( f->type == Flit::WRITE_REQUEST ) {
-    vcBegin = gWriteReqBeginVC;
-    vcEnd = gWriteReqEndVC;
-  } else if ( f->type ==  Flit::READ_REPLY ) {
-    vcBegin = gReadReplyBeginVC;
-    vcEnd = gReadReplyEndVC;
-  } else if ( f->type ==  Flit::WRITE_REPLY ) {
-    vcBegin = gWriteReplyBeginVC;
-    vcEnd = gWriteReplyEndVC;
-  }
+  int vcBegin = gBeginVCs[f->cl];
+  int vcEnd = gEndVCs[f->cl];
+//   int vcBegin = 0, vcEnd = gNumVCs-1;
+//   if ( f->type == Flit::READ_REQUEST ) {
+//     vcBegin = gReadReqBeginVC;
+//     vcEnd = gReadReqEndVC;
+//   } else if ( f->type == Flit::WRITE_REQUEST ) {
+//     vcBegin = gWriteReqBeginVC;
+//     vcEnd = gWriteReqEndVC;
+//   } else if ( f->type ==  Flit::READ_REPLY ) {
+//     vcBegin = gReadReplyBeginVC;
+//     vcEnd = gReadReplyEndVC;
+//   } else if ( f->type ==  Flit::WRITE_REPLY ) {
+//     vcBegin = gWriteReplyBeginVC;
+//     vcEnd = gWriteReplyEndVC;
+//   }
   assert(((f->vc >= vcBegin) && (f->vc <= vcEnd)) || (inject && (f->vc < 0)));
 
   int out_port;
@@ -412,20 +414,22 @@ void xyyx_flatfly( const Router *r, const Flit *f, int in_channel,
 		  OutputSet *outputs, bool inject )
 { 
   // ( Traffic Class , Routing Order ) -> Virtual Channel Range
-  int vcBegin = 0, vcEnd = gNumVCs-1;
-  if ( f->type == Flit::READ_REQUEST ) {
-    vcBegin = gReadReqBeginVC;
-    vcEnd = gReadReqEndVC;
-  } else if ( f->type == Flit::WRITE_REQUEST ) {
-    vcBegin = gWriteReqBeginVC;
-    vcEnd = gWriteReqEndVC;
-  } else if ( f->type ==  Flit::READ_REPLY ) {
-    vcBegin = gReadReplyBeginVC;
-    vcEnd = gReadReplyEndVC;
-  } else if ( f->type ==  Flit::WRITE_REPLY ) {
-    vcBegin = gWriteReplyBeginVC;
-    vcEnd = gWriteReplyEndVC;
-  }
+  int vcBegin = gBeginVCs[f->cl];
+  int vcEnd = gEndVCs[f->cl];
+//   int vcBegin = 0, vcEnd = gNumVCs-1;
+//   if ( f->type == Flit::READ_REQUEST ) {
+//     vcBegin = gReadReqBeginVC;
+//     vcEnd = gReadReqEndVC;
+//   } else if ( f->type == Flit::WRITE_REQUEST ) {
+//     vcBegin = gWriteReqBeginVC;
+//     vcEnd = gWriteReqEndVC;
+//   } else if ( f->type ==  Flit::READ_REPLY ) {
+//     vcBegin = gReadReplyBeginVC;
+//     vcEnd = gReadReplyEndVC;
+//   } else if ( f->type ==  Flit::WRITE_REPLY ) {
+//     vcBegin = gWriteReplyBeginVC;
+//     vcEnd = gWriteReplyEndVC;
+//   }
   assert(((f->vc >= vcBegin) && (f->vc <= vcEnd)) || (inject && (f->vc < 0)));
 
   int out_port;
@@ -505,20 +509,22 @@ void valiant_flatfly( const Router *r, const Flit *f, int in_channel,
 		  OutputSet *outputs, bool inject )
 {
   // ( Traffic Class , Routing Order ) -> Virtual Channel Range
-  int vcBegin = 0, vcEnd = gNumVCs-1;
-  if ( f->type == Flit::READ_REQUEST ) {
-    vcBegin = gReadReqBeginVC;
-    vcEnd = gReadReqEndVC;
-  } else if ( f->type == Flit::WRITE_REQUEST ) {
-    vcBegin = gWriteReqBeginVC;
-    vcEnd = gWriteReqEndVC;
-  } else if ( f->type ==  Flit::READ_REPLY ) {
-    vcBegin = gReadReplyBeginVC;
-    vcEnd = gReadReplyEndVC;
-  } else if ( f->type ==  Flit::WRITE_REPLY ) {
-    vcBegin = gWriteReplyBeginVC;
-    vcEnd = gWriteReplyEndVC;
-  }
+  int vcBegin = gBeginVCs[f->cl];
+  int vcEnd = gEndVCs[f->cl];
+//   int vcBegin = 0, vcEnd = gNumVCs-1;
+//   if ( f->type == Flit::READ_REQUEST ) {
+//     vcBegin = gReadReqBeginVC;
+//     vcEnd = gReadReqEndVC;
+//   } else if ( f->type == Flit::WRITE_REQUEST ) {
+//     vcBegin = gWriteReqBeginVC;
+//     vcEnd = gWriteReqEndVC;
+//   } else if ( f->type ==  Flit::READ_REPLY ) {
+//     vcBegin = gReadReplyBeginVC;
+//     vcEnd = gReadReplyEndVC;
+//   } else if ( f->type ==  Flit::WRITE_REPLY ) {
+//     vcBegin = gWriteReplyBeginVC;
+//     vcEnd = gWriteReplyEndVC;
+//   }
   assert(((f->vc >= vcBegin) && (f->vc <= vcEnd)) || (inject && (f->vc < 0)));
 
   int out_port;
@@ -574,20 +580,22 @@ void min_flatfly( const Router *r, const Flit *f, int in_channel,
 		  OutputSet *outputs, bool inject )
 {
   // ( Traffic Class , Routing Order ) -> Virtual Channel Range
-  int vcBegin = 0, vcEnd = gNumVCs-1;
-  if ( f->type == Flit::READ_REQUEST ) {
-    vcBegin = gReadReqBeginVC;
-    vcEnd = gReadReqEndVC;
-  } else if ( f->type == Flit::WRITE_REQUEST ) {
-    vcBegin = gWriteReqBeginVC;
-    vcEnd = gWriteReqEndVC;
-  } else if ( f->type ==  Flit::READ_REPLY ) {
-    vcBegin = gReadReplyBeginVC;
-    vcEnd = gReadReplyEndVC;
-  } else if ( f->type ==  Flit::WRITE_REPLY ) {
-    vcBegin = gWriteReplyBeginVC;
-    vcEnd = gWriteReplyEndVC;
-  }
+  int vcBegin = gBeginVCs[f->cl];
+  int vcEnd = gEndVCs[f->cl];
+//   int vcBegin = 0, vcEnd = gNumVCs-1;
+//   if ( f->type == Flit::READ_REQUEST ) {
+//     vcBegin = gReadReqBeginVC;
+//     vcEnd = gReadReqEndVC;
+//   } else if ( f->type == Flit::WRITE_REQUEST ) {
+//     vcBegin = gWriteReqBeginVC;
+//     vcEnd = gWriteReqEndVC;
+//   } else if ( f->type ==  Flit::READ_REPLY ) {
+//     vcBegin = gReadReplyBeginVC;
+//     vcEnd = gReadReplyEndVC;
+//   } else if ( f->type ==  Flit::WRITE_REPLY ) {
+//     vcBegin = gWriteReplyBeginVC;
+//     vcEnd = gWriteReplyEndVC;
+//   }
   assert(((f->vc >= vcBegin) && (f->vc <= vcEnd)) || (inject && (f->vc < 0)));
 
   int out_port;
@@ -629,20 +637,22 @@ void ugal_xyyx_flatfly_onchip( const Router *r, const Flit *f, int in_channel,
 			  OutputSet *outputs, bool inject )
 {
   // ( Traffic Class , Routing Order ) -> Virtual Channel Range
-  int vcBegin = 0, vcEnd = gNumVCs-1;
-  if ( f->type == Flit::READ_REQUEST ) {
-    vcBegin = gReadReqBeginVC;
-    vcEnd = gReadReqEndVC;
-  } else if ( f->type == Flit::WRITE_REQUEST ) {
-    vcBegin = gWriteReqBeginVC;
-    vcEnd = gWriteReqEndVC;
-  } else if ( f->type ==  Flit::READ_REPLY ) {
-    vcBegin = gReadReplyBeginVC;
-    vcEnd = gReadReplyEndVC;
-  } else if ( f->type ==  Flit::WRITE_REPLY ) {
-    vcBegin = gWriteReplyBeginVC;
-    vcEnd = gWriteReplyEndVC;
-  }
+  int vcBegin = gBeginVCs[f->cl];
+  int vcEnd = gEndVCs[f->cl];
+//   int vcBegin = 0, vcEnd = gNumVCs-1;
+//   if ( f->type == Flit::READ_REQUEST ) {
+//     vcBegin = gReadReqBeginVC;
+//     vcEnd = gReadReqEndVC;
+//   } else if ( f->type == Flit::WRITE_REQUEST ) {
+//     vcBegin = gWriteReqBeginVC;
+//     vcEnd = gWriteReqEndVC;
+//   } else if ( f->type ==  Flit::READ_REPLY ) {
+//     vcBegin = gReadReplyBeginVC;
+//     vcEnd = gReadReplyEndVC;
+//   } else if ( f->type ==  Flit::WRITE_REPLY ) {
+//     vcBegin = gWriteReplyBeginVC;
+//     vcEnd = gWriteReplyEndVC;
+//   }
   assert(((f->vc >= vcBegin) && (f->vc <= vcEnd)) || (inject && (f->vc < 0)));
 
   int out_port;
@@ -828,20 +838,22 @@ void ugal_flatfly_onchip( const Router *r, const Flit *f, int in_channel,
 			  OutputSet *outputs, bool inject )
 {
   // ( Traffic Class , Routing Order ) -> Virtual Channel Range
-  int vcBegin = 0, vcEnd = gNumVCs-1;
-  if ( f->type == Flit::READ_REQUEST ) {
-    vcBegin = gReadReqBeginVC;
-    vcEnd = gReadReqEndVC;
-  } else if ( f->type == Flit::WRITE_REQUEST ) {
-    vcBegin = gWriteReqBeginVC;
-    vcEnd = gWriteReqEndVC;
-  } else if ( f->type ==  Flit::READ_REPLY ) {
-    vcBegin = gReadReplyBeginVC;
-    vcEnd = gReadReplyEndVC;
-  } else if ( f->type ==  Flit::WRITE_REPLY ) {
-    vcBegin = gWriteReplyBeginVC;
-    vcEnd = gWriteReplyEndVC;
-  }
+  int vcBegin = gBeginVCs[f->cl];
+  int vcEnd = gEndVCs[f->cl];
+//   int vcBegin = 0, vcEnd = gNumVCs-1;
+//   if ( f->type == Flit::READ_REQUEST ) {
+//     vcBegin = gReadReqBeginVC;
+//     vcEnd = gReadReqEndVC;
+//   } else if ( f->type == Flit::WRITE_REQUEST ) {
+//     vcBegin = gWriteReqBeginVC;
+//     vcEnd = gWriteReqEndVC;
+//   } else if ( f->type ==  Flit::READ_REPLY ) {
+//     vcBegin = gReadReplyBeginVC;
+//     vcEnd = gReadReplyEndVC;
+//   } else if ( f->type ==  Flit::WRITE_REPLY ) {
+//     vcBegin = gWriteReplyBeginVC;
+//     vcEnd = gWriteReplyEndVC;
+//   }
   assert(((f->vc >= vcBegin) && (f->vc <= vcEnd)) || (inject && (f->vc < 0)));
 
   int out_port;
@@ -1001,20 +1013,22 @@ void ugal_pni_flatfly_onchip( const Router *r, const Flit *f, int in_channel,
 			      OutputSet *outputs, bool inject )
 {
   // ( Traffic Class , Routing Order ) -> Virtual Channel Range
-  int vcBegin = 0, vcEnd = gNumVCs-1;
-  if ( f->type == Flit::READ_REQUEST ) {
-    vcBegin = gReadReqBeginVC;
-    vcEnd = gReadReqEndVC;
-  } else if ( f->type == Flit::WRITE_REQUEST ) {
-    vcBegin = gWriteReqBeginVC;
-    vcEnd = gWriteReqEndVC;
-  } else if ( f->type ==  Flit::READ_REPLY ) {
-    vcBegin = gReadReplyBeginVC;
-    vcEnd = gReadReplyEndVC;
-  } else if ( f->type ==  Flit::WRITE_REPLY ) {
-    vcBegin = gWriteReplyBeginVC;
-    vcEnd = gWriteReplyEndVC;
-  }
+  int vcBegin = gBeginVCs[f->cl];
+  int vcEnd = gEndVCs[f->cl];
+//   int vcBegin = 0, vcEnd = gNumVCs-1;
+//   if ( f->type == Flit::READ_REQUEST ) {
+//     vcBegin = gReadReqBeginVC;
+//     vcEnd = gReadReqEndVC;
+//   } else if ( f->type == Flit::WRITE_REQUEST ) {
+//     vcBegin = gWriteReqBeginVC;
+//     vcEnd = gWriteReqEndVC;
+//   } else if ( f->type ==  Flit::READ_REPLY ) {
+//     vcBegin = gReadReplyBeginVC;
+//     vcEnd = gReadReplyEndVC;
+//   } else if ( f->type ==  Flit::WRITE_REPLY ) {
+//     vcBegin = gWriteReplyBeginVC;
+//     vcEnd = gWriteReplyEndVC;
+//   }
   assert(((f->vc >= vcBegin) && (f->vc <= vcEnd)) || (inject && (f->vc < 0)));
 
   int out_port;

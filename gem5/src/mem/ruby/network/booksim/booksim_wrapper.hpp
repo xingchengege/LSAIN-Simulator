@@ -38,8 +38,10 @@ namespace booksim{
 
 			//返回所有弹出队列中的packets
 			std::vector<RetiredPacket>& RetirePackets();
-
+			
+			//返回弹出队列中的一个packet
 			RetiredPacket RetirePacket();
+			
 			//查看网络中是否还有剩余flits
 			bool CheckInFlightPackets();
 

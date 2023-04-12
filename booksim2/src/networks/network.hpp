@@ -115,8 +115,8 @@ public:
   Router * GetRouter(int index) {return _routers[index];}
   int NumRouters() const {return _size;}
 };
-}
-}
-}
+}// booksim
+}// ruby
+}// gem5
 #endif 
 

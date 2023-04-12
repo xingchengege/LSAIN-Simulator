@@ -76,19 +76,12 @@ protected:
   vector<int> _use_read_write;
   vector<double> _write_fraction;
 
-  vector<int> _read_request_size;
-  vector<int> _read_reply_size;
-  vector<int> _write_request_size;
-  vector<int> _write_reply_size;
-
-  vector<string> _traffic;
 
   vector<int> _class_priority;
 
   vector<vector<int> > _last_class;
 
-  vector<TrafficPattern *> _traffic_pattern;
-  vector<InjectionProcess *> _injection_process;
+
 
   // ============ Message priorities ============ 
 
@@ -113,13 +106,13 @@ protected:
 
   // ============ Injection queues ============ 
 
-  vector<vector<int> > _qtime;
-  vector<vector<bool> > _qdrained;
+  int _injection_queues;
+
   vector<vector<list<Flit *> > > _partial_packets;
 
-  vector<map<int, Flit *> > _total_in_flight_flits;
-  vector<map<int, Flit *> > _measured_in_flight_flits;
-  vector<map<int, Flit *> > _retired_packets;
+  vector<map<long, Flit *> > _total_in_flight_flits;
+  vector<map<long, Flit *> > _measured_in_flight_flits;
+  vector<map<long, Flit *> > _retired_packets;
   bool _empty_network;
 
   bool _hold_switch_for_packet;
@@ -200,8 +193,8 @@ protected:
   vector<double> _overall_crossbar_conflict_stalls;
 #endif
 
-  vector<int> _slowest_packet;
-  vector<int> _slowest_flit;
+  vector<long> _slowest_packet;
+  vector<long> _slowest_flit;
 
   map<string, Stats *> _stats;
 
@@ -233,8 +226,8 @@ protected:
   vector<double> _warmup_threshold;
   vector<double> _acc_warmup_threshold;
 
-  int _cur_id;
-  int _cur_pid;
+  long _cur_id;
+  long _cur_pid;
   long long _time;
 
   set<int> _flits_to_watch;
