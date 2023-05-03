@@ -63,7 +63,7 @@ namespace gem5
 
 PciDevice::PciDevice(const PciDeviceParams &p)
     : DmaDevice(p),
-      _busAddr(p.pci_bus, p.pci_dev, p.pci_func),
+      _busAddr(p.pci_bus, p.pci_dev, p.pci_func, p.root_port_number),
       PMCAP_BASE(p.PMCAPBaseOffset),
       PMCAP_ID_OFFSET(p.PMCAPBaseOffset+PMCAP_ID),
       PMCAP_PC_OFFSET(p.PMCAPBaseOffset+PMCAP_PC),
@@ -81,6 +81,9 @@ PciDevice::PciDevice(const PciDeviceParams &p)
       pioDelay(p.pio_latency),
       configDelay(p.config_latency)
 {
+	//Modified
+	is_invisible = p.is_invisible ; 
+
     fatal_if(p.InterruptPin >= 5,
              "Invalid PCI interrupt '%i' specified.", p.InterruptPin);
 
@@ -211,6 +214,15 @@ PciDevice::PciDevice(const PciDeviceParams &p)
 Tick
 PciDevice::readConfig(PacketPtr pkt)
 {
+	//Modified 
+	if(is_invisible)
+    {
+        uint8_t *pkt_data(pkt->getPtr<uint8_t>());
+        std::fill(pkt_data, pkt_data + pkt->getSize(), 0xFF);
+        pkt->makeAtomicResponse();
+        return 0;
+    }
+
     int offset = pkt->getAddr() & PCI_CONFIG_SIZE;
 
     /* Return 0 for accesses to unimplemented PCI configspace areas */

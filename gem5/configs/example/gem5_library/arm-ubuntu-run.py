@@ -99,8 +99,17 @@ board = ArmBoard(
 
 # Here we set a full system workload. The "arm64-ubuntu-20.04-boot" boots
 # Ubuntu 20.04.
+command = (
+    "m5 exit;"
+    + "echo 'This is running on Timing CPU cores.';"
+    + "sleep 1;"
+    + "m5 exit;"
+)
 
-board.set_workload(Workload("arm64-ubuntu-20.04-boot"))
+workload = Workload("arm64-ubuntu-20.04-boot")
+workload.set_parameter("readfile_contents", command)
+board.set_workload(workload)
+# board.set_workload()
 
 # We define the system with the aforementioned system defined.
 

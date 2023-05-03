@@ -58,7 +58,7 @@ from gem5.resources.workload import Workload
 requires(
     isa_required=ISA.X86,
     coherence_protocol_required=CoherenceProtocol.MESI_TWO_LEVEL,
-    kvm_required=True,
+    kvm_required=False,
 )
 
 from gem5.components.cachehierarchies.ruby.mesi_two_level_cache_hierarchy import (
@@ -86,7 +86,7 @@ memory = SingleChannelDDR3_1600(size="3GB")
 # we start with KVM cores to simulate the OS boot, then switch to the Timing
 # cores for the command we wish to run after boot.
 processor = SimpleSwitchableProcessor(
-    starting_core_type=CPUTypes.KVM,
+    starting_core_type=CPUTypes.TIMING,
     switch_core_type=CPUTypes.TIMING,
     isa=ISA.X86,
     num_cores=2,

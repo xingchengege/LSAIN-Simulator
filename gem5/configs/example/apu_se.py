@@ -336,7 +336,7 @@ parser.add_argument(
 # --     1   0   1   C_RO_S  (Cached-ReadOnly-Shared)
 # --     1   0   0   C_RO_US (Cached-ReadOnly-Unshared)
 # --     0   1   x   UC_L2   (Uncached_GL2)
-# --     0   0   x   UC_All  (Uncached_All_Load)
+# --     0   0   x   UC_All  (Uncached_A ll_Load)
 # default value: 5/C_RO_S (only allow caching in GL2 for read. Shared)
 parser.add_argument(
     "--m-type",
@@ -406,7 +406,9 @@ print(
     "Num CU = ",
     n_cu,
 )
-
+# print(
+#     buildEnv["PROTOCOL"]
+# )
 ########################## Creating the GPU system ########################
 # shader is the GPU
 shader = Shader(

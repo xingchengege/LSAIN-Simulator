@@ -877,6 +877,7 @@ void TrafficManager::_Step( )
                         vc_count /= router->NumOutputs();
                         vc_start += next_output * vc_count;
                         vc_end = vc_start + vc_count - 1;
+						// cout<<vc_start<<' '<<vc_end<<' '<<se.vc_start<<' '<<se.vc_end<<endl;
                         assert(vc_start >= se.vc_start && vc_start <= se.vc_end);
                         assert(vc_end >= se.vc_start && vc_end <= se.vc_end);
                         assert(vc_start <= vc_end);
@@ -915,7 +916,6 @@ void TrafficManager::_Step( )
                         }
                     }
                 }
-				if(cf->id == 0) cout<<cf->vc<<endl;
                 if(cf->vc == -1) {
                     if(cf->watch) {
                         *gWatchOut << GetSimTime() << " | " << FullName() << " | "

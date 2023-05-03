@@ -41,6 +41,7 @@ from m5.SimObject import SimObject
 from m5.params import *
 from m5.proxy import *
 from m5.objects.PciDevice import PciDevice, PciIoBar, PciMemBar
+from m5.objects.ClockedObject import ClockedObject
 
 ETHERNET_ROLE = "ETHERNET"
 Port.compat(ETHERNET_ROLE, ETHERNET_ROLE)
@@ -55,6 +56,22 @@ class VectorEtherInt(VectorPort):
     def __init__(self, desc):
         super().__init__(ETHERNET_ROLE, desc)
 
+
+class PCIELink(ClockedObject):
+    type = 'PCIELink' 
+    cxx_header = 'mem/pcie_link.hh'
+    cxx_class = 'gem5::PCIELink'
+    
+    upstreamSlave = ResponsePort("upstream slaveport")
+    downstreamMaster = RequestPort("downstream masterport for pio requests")
+    upstreamMaster   = RequestPort("upstream master port for dma requests")
+    downstreamSlave  = ResponsePort("downstream slave port")
+    delay = Param.Latency('0us', "packet transmit delay")
+    delay_var = Param.Latency('0ns', "packet transmit delay variability")
+    speed = Param.NetworkBandwidth('2.5Gbps', "link speed") #Gen 3 link speed , Gen 1 2.5 Gbps , Gen 2 5 Gbps , Gen 3 8 Gbps. Gen 3 uses 128B/130B encoding , so effective speed = 985 MBPS  
+    mps = Param.Int('64' , "Max Payload Size in Bytes")
+    max_queue_size = Param.Int('4' , "Size of the replay buffer")
+    lanes = Param.Int('1' , "Number of lanes on link") # 1,2,4 ,8 or 16 
 
 class EtherLink(SimObject):
     type = "EtherLink"
@@ -222,6 +239,72 @@ class IGbE_igb(IGbE):
     phy_pid = 0x0141
     phy_epid = 0x0CC0
 
+class IGbE_pcie(EtherDevice):
+    type='IGbE_pcie'
+    cxx_header = "dev/net/i8257xGBe.hh"
+    cxx_class = 'gem5::IGbE_pcie'
+    
+    hardware_address= Param.EthernetAddr(NextEthernetAddr, "Ethernet Hardware Address")
+    rx_fifo_size = Param.MemorySize('384kB', "Size of rx FIFO")
+    tx_fifo_size = Param.MemorySize('384kB', "Size of tx FIFO")
+    rx_desc_cache_size = Param.Int(64 , "Number of entries in rx descriptor cache")
+    tx_desc_cache_size = Param.Int(64 , "Number of entires in tx descriptor cache")
+    
+    wb_delay = Param.Latency('10ns', "delay before desc writeback occurs")
+    fetch_delay = Param.Latency('10ns', "delay before desc fetch occurs")
+    fetch_comp_delay = Param.Latency('10ns', "delay after desc fetch occurs")
+    wb_comp_delay = Param.Latency('10ns', "delay after desc wb occurs")
+    tx_read_delay = Param.Latency('0ns', "delay after tx dma read")
+    rx_write_delay = Param.Latency('0ns', "delay after rx dma read")
+    
+    SubClassCode = 0x00
+    SubsystemID = 0x1008
+    SubsystemVendorID = 0x8086
+    #flag = 0 
+    DeviceID = 0x10D3
+    VendorID = 0x8086
+    Command  = 0x0007          #Set command to 7 to indicate that the device can use I/O access, memory access and bus mastering capabilities
+    Status = 0x0010            #Status is 0010 so bit4 indicates that there are PCIe capabilities (MSI interrupts)
+    ClassCode = 0x02
+    ProgIF = 0x00
+    LatencyTimer= 0x00
+    BAR0 = PciMemBar(size='128KiB')
+    MaximumLatency = 0x00 
+    MinimumGrant = 0xff
+    InterruptLine = 0x1E
+    InterruptPin = 0x01
+    
+    CapabilityPtr = 0xC8
+    phy_pid = Param.UInt16(0x0141 , "Phy pid that corresponds to device ID")
+    phy_epid = Param.UInt16(0x0CB1 , "Phy EPID that corresponds to device ID")
+    PMCAPBaseOffset = 0xC8
+    PMCAPNextCapability= 0xD0
+    PMCAPCapId = 0x01
+    PMCAPCapabilities= 0x0022
+    PMCAPCtrlStatus= 0x0000
+    MSICAPBaseOffset = 0xD0
+    MSICAPCapId = 0x05
+    MSICAPNextCapability= 0xE0
+    MSICAPMsgCtrl = 0x0080
+    MSICAPMsgAddr = 0x00000000
+    MSICAPMsgUpperAddr= 0x00000000
+    MSICAPMsgData = 0x0000
+    MSIXCAPBaseOffset = 0xA0
+    MSIXCAPNextCapability= 0x00
+    MSIXCAPCapId = 0x11
+    MSIXMsgCtrl = 0x0001
+    MSIXTableOffset = 0x00000003
+    MSIXPbaOffset = 0x00004003
+    PXCAPBaseOffset = 0xE0
+    PXCAPNextCapability= 0xA0 #No need MSI-X or MSI Capability. Looks like 82574 supports legacy PCI interrupts
+    PXCAPCapId = 0x10
+    PXCAPCapabilities=0x0001
+    PXCAPDevCapabilities = 0x00008CC1
+    PXCAPDevCtrl= 0x2810
+    PXCAPDevStatus=0x0000
+    PXCAPLinkCap = 0x01031011 #00031C11 , disabled aspm, set pcie port number of 1. 
+    PXCAPLinkCtrl= 0x0000
+    PXCAPLinkStatus= 0x1011
 
 class EtherDevBase(EtherDevice):
     type = "EtherDevBase"

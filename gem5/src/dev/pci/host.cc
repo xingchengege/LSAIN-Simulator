@@ -44,6 +44,10 @@
 #include "dev/platform.hh"
 #include "params/GenericPciHost.hh"
 #include "params/PciHost.hh"
+#include "mem/PciBridge.hh"
+
+#include "mem/packet.hh"
+#include "mem/packet_access.hh"
 
 namespace gem5
 {
@@ -72,6 +76,23 @@ PciHost::registerDevice(PciDevice *device, PciBusAddr bus_addr, PciIntPin pin)
     return DeviceInterface(*this, bus_addr, pin);
 }
 
+void
+PciHost::registerBridge(config_class *bridge, PciBusAddr bus_Addr)
+{
+	// create a map entry with the key as the PCIBusAddr 
+	//(since this is unique) and value as a pointer to 
+	// the config class object that called this function
+	auto map_entry = bridges.emplace(bus_Addr, bridge);
+	printf("%02x:%02x.%i: Registering Bridge\n",
+	        bus_Addr.bus, bus_Addr.dev, bus_Addr.func);
+	DPRINTF(PciHost, "%02x:%02x.%i: Registering Bridge\n",
+            bus_Addr.bus, bus_Addr.dev, bus_Addr.func);
+
+    fatal_if(!map_entry.second,
+             "%02x:%02x.%i: PCI bus ID collision\n",
+             bus_Addr.bus, bus_Addr.dev, bus_Addr.func);
+}
+
 PciDevice *
 PciHost::getDevice(const PciBusAddr &addr)
 {
@@ -84,6 +105,13 @@ PciHost::getDevice(const PciBusAddr &addr) const
 {
     auto device = devices.find(addr);
     return device != devices.end() ? device->second : nullptr;
+}
+
+config_class *
+PciHost::getBridge(const PciBusAddr & addr)
+{
+	auto bridge = bridges.find(addr);
+	return bridge != bridges.end() ? bridge->second : nullptr;
 }
 
 PciHost::DeviceInterface::DeviceInterface(
@@ -145,11 +173,44 @@ GenericPciHost::read(PacketPtr pkt)
             size);
 
     PciDevice *const pci_dev(getDevice(dev_addr.first));
-    if (pci_dev) {
+    config_class *registered_bridge = getBridge(dev_addr.first);
+	
+	if (pci_dev) {
         // @todo Remove this after testing
         pkt->headerDelay = pkt->payloadDelay = 0;
         return pci_dev->readConfig(pkt);
-    } else {
+    } else if (registered_bridge){
+		DPRINTF(PciHost, "Config access to bridge\n");
+		pkt->headerDelay = pkt->payloadDelay = 0;
+		Tick tick = registered_bridge->readConfig(pkt);
+		switch (size) {
+			case sizeof(uint8_t):
+				DPRINTF(PciHost, "%02x:%02x.%i: read: offset=0x%x, size=0x%x,data = %#x\n",
+					dev_addr.first.bus, dev_addr.first.dev, dev_addr.first.func,
+					dev_addr.second,
+					size,
+					(uint32_t)pkt->getLE<uint8_t>());
+				break;
+			case sizeof(uint16_t):
+				DPRINTF(PciHost, "%02x:%02x.%i: read: offset=0x%x, size=0x%x,data = %#x\n",
+					dev_addr.first.bus, dev_addr.first.dev, dev_addr.first.func,
+					dev_addr.second,
+					size,
+					(uint32_t)pkt->getLE<uint16_t>());
+				break;
+			case sizeof(uint32_t):
+				DPRINTF(PciHost, "%02x:%02x.%i: read: offset=0x%x, size=0x%x,data = %#x\n",
+					dev_addr.first.bus, dev_addr.first.dev, dev_addr.first.func,
+					dev_addr.second,
+					size,
+					(uint32_t)pkt->getLE<uint32_t>());
+				break;
+			default:
+				panic("invalid access size(?) for PCI configspace!\n");
+		}
+		return tick;
+	} 
+	else {
         uint8_t *pkt_data(pkt->getPtr<uint8_t>());
         std::fill(pkt_data, pkt_data + size, 0xFF);
         pkt->makeAtomicResponse();
@@ -161,20 +222,49 @@ Tick
 GenericPciHost::write(PacketPtr pkt)
 {
     const auto dev_addr(decodeAddress(pkt->getAddr() - confBase));
+	const Addr size(pkt->getSize());
+    // DPRINTF(PciHost, "%02x:%02x.%i: write: offset=0x%x, size=0x%x\n",
+    //         dev_addr.first.bus, dev_addr.first.dev, dev_addr.first.func,
+    //         dev_addr.second,
+    //         pkt->getSize());
 
-    DPRINTF(PciHost, "%02x:%02x.%i: write: offset=0x%x, size=0x%x\n",
+	switch (size) {
+      case sizeof(uint8_t):
+        DPRINTF(PciHost, "%02x:%02x.%i: write: offset=0x%x, size=0x%x,data = %#x\n",
             dev_addr.first.bus, dev_addr.first.dev, dev_addr.first.func,
             dev_addr.second,
-            pkt->getSize());
+            size,
+            (uint32_t)pkt->getLE<uint8_t>());
+        break;
+      case sizeof(uint16_t):
+        DPRINTF(PciHost, "%02x:%02x.%i: write: offset=0x%x, size=0x%x,data = %#x\n",
+            dev_addr.first.bus, dev_addr.first.dev, dev_addr.first.func,
+            dev_addr.second,
+            size,
+            (uint32_t)pkt->getLE<uint16_t>());
+        break;
+      case sizeof(uint32_t):
+        DPRINTF(PciHost, "%02x:%02x.%i: write: offset=0x%x, size=0x%x,data = %#x\n",
+            dev_addr.first.bus, dev_addr.first.dev, dev_addr.first.func,
+            dev_addr.second,
+            size,
+            (uint32_t)pkt->getLE<uint32_t>());
+        break;
+      default:
+        panic("invalid access size(?) for PCI configspace!\n");
+    }        
 
     PciDevice *const pci_dev(getDevice(dev_addr.first));
-    panic_if(!pci_dev,
+	config_class * registered_bridge = getBridge(dev_addr.first);
+
+    panic_if(!pci_dev && !registered_bridge,
              "%02x:%02x.%i: Write to config space on non-existent PCI device\n",
              dev_addr.first.bus, dev_addr.first.dev, dev_addr.first.func);
 
     // @todo Remove this after testing
     pkt->headerDelay = pkt->payloadDelay = 0;
 
+	if(registered_bridge) return registered_bridge->writeConfig(pkt);
     return pci_dev->writeConfig(pkt);
 }
 

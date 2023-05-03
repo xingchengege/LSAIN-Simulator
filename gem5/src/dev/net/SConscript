@@ -41,8 +41,8 @@
 Import('*')
 
 SimObject('Ethernet.py', sim_objects=[
-    'EtherLink', 'DistEtherLink', 'EtherBus', 'EtherSwitch', 'EtherTapBase',
-    'EtherTapStub', 'EtherDump', 'EtherDevice', 'IGbE', 'EtherDevBase',
+    'PCIELink','EtherLink', 'DistEtherLink', 'EtherBus', 'EtherSwitch', 'EtherTapBase',
+    'EtherTapStub', 'EtherDump', 'EtherDevice', 'IGbE', 'IGbE_pcie', 'EtherDevBase',
     'NSGigE', 'Sinic'] +
     (['EtherTap'] if env['CONF']['HAVE_TUNTAP'] else []))
 
@@ -79,6 +79,7 @@ DebugFlag('DistEthernetCmd')
 
 # Ethernet controllers
 Source('i8254xGBe.cc')
+Source('i8257xGBe.cc')
 Source('ns_gige.cc')
 Source('sinic.cc')
 

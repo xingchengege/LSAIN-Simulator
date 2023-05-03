@@ -95,6 +95,8 @@ class PciDevice(DmaDevice):
     cxx_class = "gem5::PciDevice"
     cxx_header = "dev/pci/device.hh"
     abstract = True
+    is_invisible = Param.Int(0, 'Should device register itself')
+    root_port_number = Param.UInt8("Root port the Pci device is situated under")
 
     host = Param.PciHost(Parent.any, "PCI host")
     pci_bus = Param.Int("PCI bus")

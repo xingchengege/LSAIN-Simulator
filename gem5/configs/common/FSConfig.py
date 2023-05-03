@@ -46,29 +46,17 @@ from common.Benchmarks import *
 from common import ObjectList
 
 # Populate to reflect supported os types per target ISA
-os_types = set()
-if m5.defines.buildEnv["USE_ARM_ISA"]:
-    os_types.update(
-        [
-            "linux",
-            "android-gingerbread",
-            "android-ics",
-            "android-jellybean",
-            "android-kitkat",
-            "android-nougat",
-        ]
-    )
-if m5.defines.buildEnv["USE_MIPS_ISA"]:
-    os_types.add("linux")
-if m5.defines.buildEnv["USE_POWER_ISA"]:
-    os_types.add("linux")
-if m5.defines.buildEnv["USE_RISCV_ISA"]:
-    os_types.add("linux")  # TODO that's a lie
-if m5.defines.buildEnv["USE_SPARC_ISA"]:
-    os_types.add("linux")
-if m5.defines.buildEnv["USE_X86_ISA"]:
-    os_types.add("linux")
-
+os_types = { 'mips'  : [ 'linux' ],
+             'riscv' : [ 'linux' ], # TODO that's a lie
+             'sparc' : [ 'linux' ],
+             'x86'   : [ 'linux' ],
+             'arm'   : [ "linux",
+						 "android-gingerbread",
+						 "android-ics",
+						 "android-jellybean",
+						 "android-kitkat",
+						 "android-nougat",]
+           }
 
 class CowIdeDisk(IdeDisk):
     image = CowDiskImage(child=RawDiskImage(read_only=True), read_only=False)
@@ -204,6 +192,7 @@ def makeSparcSystem(mem_mode, mdesc=None, cmdline=None):
 
 def makeArmSystem(
     mem_mode,
+    _options,
     machine_type,
     num_cpus=1,
     mdesc=None,
@@ -214,6 +203,8 @@ def makeArmSystem(
     ruby=False,
     vio_9p=None,
     bootloader=None,
+    should_print = False,
+    cacheline_size = 64
 ):
     assert machine_type
 
@@ -227,6 +218,32 @@ def makeArmSystem(
 
     self.readfile = mdesc.script()
     self.iobus = IOXBar()
+    self.pcie1 = PCIELink(lanes = _options.switch_up_lanes, 
+                          speed = '5Gbps',
+                          mps = cacheline_size, 
+                          max_queue_size = _options.replay_buffer_size)
+    self.pcie3 = PCIELink(lanes = _options.switch_up_lanes, 
+                          speed = '5Gbps',
+                          mps = cacheline_size, 
+                          max_queue_size = _options.replay_buffer_size)
+    self.pcie4 = PCIELink(lanes = _options.switch_up_lanes, 
+                          speed = '5Gbps',
+                          mps = cacheline_size, 
+                          max_queue_size = _options.replay_buffer_size)
+    self.pcie5 = PCIELink(lanes = _options.switch_up_lanes, 
+                          speed = '5Gbps',
+                          mps = cacheline_size, 
+                          max_queue_size = _options.replay_buffer_size)
+    self.pcie6 = PCIELink(lanes = _options.switch_up_lanes, 
+                          speed = '5Gbps',
+                          mps = cacheline_size, 
+                          max_queue_size = _options.replay_buffer_size)
+    self.pcie7 = PCIELink(lanes = _options.switch_up_lanes, 
+                          speed = '5Gbps',
+                          mps = cacheline_size, 
+                          max_queue_size = _options.replay_buffer_size)
+    self.iobus_dma = IOXBar()
+    
     if not ruby:
         self.bridge = Bridge(delay="50ns")
         self.bridge.mem_side_port = self.iobus.cpu_side_ports
@@ -235,6 +252,32 @@ def makeArmSystem(
         self.bridge.cpu_side_port = self.membus.mem_side_ports
 
     self.mem_mode = mem_mode
+    # Add RC
+    self.Root_Complex = Root_Complex(is_transmit = should_print,
+                                     req_size = _options.switch_buffer_size,
+                                     resp_size = _options.switch_buffer_size,
+                                     delay = '150ns')
+    #ANJF: Should connect to membus
+    self.Root_Complex.slave = self.membus.mem_side_ports
+    self.Root_Complex.slave_dma1 = self.pcie1.upstreamMaster
+    self.Root_Complex.slave_dma2 = self.pcie6.upstreamMaster
+    self.Root_Complex.slave_dma3 = self.pcie7.upstreamMaster
+    self.Root_Complex.master1    = self.pcie1.upstreamSlave
+    self.Root_Complex.master2    = self.pcie6.upstreamSlave
+    self.Root_Complex.master3    = self.pcie7.upstreamSlave
+    self.Root_Complex.master_dma = self.iobus_dma.cpu_side_ports
+    
+    self.switch = PciESwitch(pci_bus = 1, delay = _options.pcie_switch_delay,
+                             req_size = _options.switch_buffer_size, resp_size = _options.switch_buffer_size)
+    
+    self.switch.slave = self.pcie1.downstreamMaster
+    self.switch.slave_dma1 = self.pcie3.upstreamMaster
+    self.switch.slave_dma2 = self.pcie4.upstreamMaster
+    self.switch.slave_dma3 = self.pcie5.upstreamMaster
+    self.switch.master1    = self.pcie3.upstreamSlave
+    self.switch.master2    = self.pcie4.upstreamSlave
+    self.switch.master3    = self.pcie5.upstreamSlave
+    self.switch.master_dma = self.pcie1.downstreamSlave
 
     platform_class = ObjectList.platform_list.get(machine_type)
     # Resolve the real platform name, the original machine_type
@@ -242,6 +285,34 @@ def makeArmSystem(
     machine_type = platform_class.__name__
     self.realview = platform_class()
     self._bootmem = self.realview.bootmem
+    
+	# Attach any PCI devices this platform supports
+	# WLM: 修改网卡
+    self.realview.ethernet1 = IGbE_e1000(pci_bus = 6, pci_dev = 0, pci_func = 0, InterruptLine = 3, InterruptPin = 2, root_port_number = 1)
+    #self.realview.ethernet1 = IGbE_pcie(pci_bus = 6 , pci_dev = 0, pci_func = 0 , InterruptLine = 3, InterruptPin = 2, root_port_number = 1) #3
+    self.realview.ethernet1.pio = self.pcie6.downstreamMaster
+    self.realview.ethernet1.dma = self.pcie6.downstreamSlave
+    self.realview.ethernet2 = IGbE_e1000(pci_bus = 4, pci_dev = 0, pci_func = 0, InterruptLine = 3, InterruptPin = 1, root_port_number = 0, is_invisible = 1)
+    self.realview.ethernet2.pio = self.pcie4.downstreamMaster
+    self.realview.ethernet2.dma = self.pcie4.downstreamSlave
+    # self.realview.ethernet3 = IGbE_pcie(pci_bus =5 , pci_dev = 0, pci_func = 0 , InterruptLine = 0x1E, InterruptPin = 2) #5
+   
+	# WLM: 修改网卡
+    self.realview.ethernet3 = IGbE_e1000(pci_bus = 5, pci_dev = 0, pci_func = 0, InterruptLine = 0x1E, InterruptPin = 2, root_port_number = 0, is_invisible = 1)
+    #self.realview.ethernet3 = IGbE_pcie(pci_bus =5 , pci_dev = 0, pci_func = 0 , InterruptLine = 0x1E, InterruptPin = 2, root_port_number = 0 , is_invisible = 1) #5
+    self.realview.ethernet3.pio = self.pcie5.downstreamMaster
+    self.realview.ethernet3.dma = self.pcie5.downstreamSlave
+    # WLM: 修改网卡
+    self.realview.ethernet5 = IGbE_e1000(pci_bus = 7, pci_dev = 0, pci_func = 0, InterruptLine = 0x1E, InterruptPin = 4, root_port_number = 2, is_invisible = 1)
+    #self.realview.ethernet5 = IGbE_pcie(pci_bus = 7 , pci_dev = 0, pci_func = 0 , InterruptLine = 0x1E, InterruptPin = 4 , root_port_number = 2, is_invisible = 1)
+    self.realview.ethernet5.pio = self.pcie7.downstreamMaster
+    self.realview.ethernet5.dma = self.pcie7.downstreamSlave
+    
+	# Add IDE
+    self.realview.ide = IdeController(disks = [], pci_bus = 3, pci_dev = 0, pci_func = 0, InterruptLine = 2, InterruptPin = 1, root_port_number = 0)
+    self.realview.ide.pio = self.pcie3.downstreamMaster
+    self.realview.ide.dma = self.pcie3.downstreamSlave
+    self.realview.ide.host = self.realview.pci_host
 
     # Attach any PCI devices this platform supports
     self.realview.attachPciDevices()
@@ -255,7 +326,8 @@ def makeArmSystem(
     elif hasattr(self.realview, "cf_ctrl"):
         self.realview.cf_ctrl.disks = disks
     else:
-        self.pci_ide = IdeController(disks=disks)
+        # self.pci_ide = IdeController(disks=disks)
+        self.pci_ide = IdeController(disks=disks, root_port_number=0)
         pci_devices.append(self.pci_ide)
 
     self.mem_ranges = []
@@ -403,10 +475,265 @@ def makeArmSystem(
                 "Exclusive operations. Multicore ARM systems configured "
                 "with the MI_example protocol will not work properly."
             )
+    
+	#WLM: add connect pci_host
+    self.Root_Complex.host = self.realview.pci_host
+    self.switch.host = self.realview.pci_host
+    self.realview.ethernet1.host = self.realview.pci_host
+    self.realview.ethernet2.host = self.realview.pci_host
+    self.realview.ethernet3.host = self.realview.pci_host
+    self.realview.ethernet5.host = self.realview.pci_host
 
     return self
 
+def makeANJFSystem(mem_mode, _options, machine_type, num_cpus=1, mdesc = None,
+                   dtb_filename=None, bare_metal=False, cmdline=None,
+                   external_memory="", ruby=False,
+                   vio_9p=None, bootloader=None,
+                   should_print=False, cacheline_size=64):
+    assert machine_type
 
+    pci_devices = []
+    
+    self = ArmSystem()
+    # Resolve the real platform name, the original machine_type
+	# variable might have been an alias
+    platform_class = ObjectList.platform_list.get(machine_type)
+    machine_type = platform_class.__name__
+    self.realview = platform_class()
+    self._bootmem = self.realview.bootmem
+    
+    if not mdesc:
+        # generic system
+        mdesc = SysConfig()
+        
+    self.readfile = mdesc.script()
+        
+	# create iobus and iobus_dma
+    self.iobus = IOXBar()
+    self.iobus_dma = IOXBar()
+    
+	# ANJF: Add 3 PCIELink
+    self.pcie1 = PCIELink(lanes = _options.switch_up_lanes, speed = '5Gbps',
+        mps = cacheline_size, max_queue_size = _options.replay_buffer_size)
+    self.pcie2 = PCIELink(lanes = _options.switch_up_lanes, speed = '5Gbps',
+        mps = cacheline_size, max_queue_size = _options.replay_buffer_size)
+    self.pcie3 = PCIELink(lanes = _options.switch_up_lanes, speed = '5Gbps',
+        mps = cacheline_size, max_queue_size = _options.replay_buffer_size)
+    # self.pcie4 = PCIELink(lanes = _options.switch_up_lanes, speed = '5Gbps',
+    #     mps = cacheline_size, max_queue_size = _options.replay_buffer_size)
+    
+    if not ruby:
+        #create membus and bridge
+        self.bridge = Bridge(delay = '50ns')
+        self.bridge.mem_side_port = self.iobus.cpu_side_ports
+        self.membus = MemBus()
+        self.membus.badaddr_responder.warn_access = "warn"
+        self.bridge.cpu_side_port = self.membus.mem_side_ports
+    
+    self.mem_mode = mem_mode
+    
+	# create RC
+    self.Root_Complex = Root_Complex(is_transmit = should_print, req_size = _options.switch_buffer_size,
+                                     resp_size = _options.switch_buffer_size, delay = '150ns')
+    
+    self.Root_Complex.host = self.realview.pci_host
+    
+	# WLM: connect to iobus
+	# TODO: should RC be connected to iobus or membus?
+    self.Root_Complex.slave = self.iobus.mem_side_ports
+    self.Root_Complex.slave_dma1 = self.pcie1.upstreamMaster
+    self.Root_Complex.slave_dma2 = self.pcie2.upstreamMaster
+    self.Root_Complex.slave_dma3 = self.pcie3.upstreamMaster
+    self.Root_Complex.master1    = self.pcie1.upstreamSlave
+    self.Root_Complex.master2    = self.pcie2.upstreamSlave
+    self.Root_Complex.master3    = self.pcie3.upstreamSlave
+    self.Root_Complex.master_dma = self.iobus_dma.cpu_side_ports # connect to iobus_dma
+    
+    # self.Root_Complex.slave_dma4 = self.pcie4.upstreamMaster
+    # self.Root_Complex.master4    = self.pcie4.upstreamSlave
+  
+	# ANJF: add NICs IGbE_e1000 or IGbE_pcie
+	# IGbE_e1000: gem5 original NIC 8254
+	# IGbE_pcie: extended NIC 8257 supporting PCI Express
+    self.realview.ethernet1 = IGbE_pcie(pci_bus = 1, pci_dev = 1, pci_func = 0,
+                                        InterruptLine = 3, InterruptPin = 1, root_port_number = 0, is_invisible = 1)
+    self.realview.ethernet2 = IGbE_pcie(pci_bus = 2, pci_dev = 2, pci_func = 0,
+                                        InterruptLine = 4, InterruptPin = 1, root_port_number = 0, is_invisible = 1)
+    self.realview.ethernet3 = IGbE_pcie(pci_bus = 3, pci_dev = 3, pci_func = 0,
+                                        InterruptLine = 5, InterruptPin = 2, root_port_number = 0, is_invisible = 1)
+    # self.realview.ethernet4 = IGbE_pcie(pci_bus = 4, pci_dev = 4, pci_func = 0,
+    #                                     InterruptLine = 6, InterruptPin = 3, root_port_number = 0, is_invisible = 1)
+
+	# ANJF: Add ethernet connect
+    self.realview.ethernet1.pio  = self.pcie1.downstreamMaster
+    self.realview.ethernet1.dma  = self.pcie1.downstreamSlave
+    self.realview.ethernet1.host = self.realview.pci_host
+    self.realview.ethernet2.pio  = self.pcie2.downstreamMaster
+    self.realview.ethernet2.dma  = self.pcie2.downstreamSlave
+    self.realview.ethernet2.host = self.realview.pci_host
+    self.realview.ethernet3.pio  = self.pcie3.downstreamMaster
+    self.realview.ethernet3.dma  = self.pcie3.downstreamSlave
+    self.realview.ethernet3.host = self.realview.pci_host
+    
+    # self.realview.ethernet4.pio  = self.pcie4.downstreamMaster
+    # self.realview.ethernet4.dma  = self.pcie4.downstreamSlave
+    # self.realview.ethernet4.host = self.realview.pci_host
+    
+	# Attach any PCI devices this platform supports
+    self.realview.attachPciDevices()
+    
+	# create disk and ide controller
+    disks = makeCowDisks(mdesc.disks())
+    # Old platforms have a built-in IDE or CF controller. Default to
+	# the IDE controller if both exist. New platforms expect the
+	# storage controller to be added from the config script
+    if hasattr(self.realview, "ide"):
+        self.realview.ide.disks = disks
+    elif hasattr(self.realview, "cf_ctrl"):
+        self.realview.cf_ctrl.disks = disks
+    else:
+        # TODO by anjf
+        # Original
+        # self.pci_ide = IdeController(disks=disks)
+        # Modified
+        # self.realview.ide = IdeController(disks = [], pci_bus=3, pci_dev=0, pci_func=0, 
+        # InterruptLine=2, InterruptPin=1, root_port_number = 0, flag=1)
+        self.pci_ide = IdeController(disks=disks, pci_bus=10, pci_dev=10, pci_func=0, 
+                    InterruptLine=10, InterruptPin=1, root_port_number = 0)
+        pci_devices.append(self.pci_ide)
+
+    self.mem_ranges = []
+    size_remain = int(Addr(mdesc.mem()))
+    for region in self.realview._mem_regions:
+        if size_remain > int(region.size()):
+            self.mem_ranges.append(region)
+            size_remain = size_remain - int(region.size())
+        else:
+            self.mem_ranges.append(AddrRange(region.start, size = size_remain))
+            size_remain = 0
+            break
+        warn("Memory size specified spans more than one region. Creating" \
+             " another memory controller for that range.")
+    
+    if size_remain > 0:
+        fatal("The currently selected ARM platforms doesn't support" \
+              " the amount of DRAM you've selected. Please try" \
+              " another platform")
+    
+    if bare_metal:
+        # EOT character on UART will end the simulation
+        self.realview.uart[0].end_on_eot = True
+        self.workload = ArmFsWorkload(dtb_addr = 0)
+    else:
+        workload = ArmFsLinux()
+        
+        if dtb_filename:
+            workload.dtb_filename = binary(dtb_filename)
+            
+        workload.machine_type = \
+            machine_type if machine_type in ArmMachineType.map else "DTOnly"  
+        
+		# Ensure that writes to the UART actually go out early in the boot
+        if not cmdline:
+            cmdline = 'earlyprintk=pl011,0x1c090000 console=ttyAMA0 ' + \
+                      'lpj=19988480 norandmaps rw loglevel=8 ' + \
+                      'mem=%(mem)s root=%(rootdev)s'
+
+        if hasattr(self.realview.gic, 'cpu_addr'):
+            self.gic_cpu_addr = self.realview.gic.cpu_addr
+            
+		# This check is for users who have previously put 'android' in
+        # the disk image filename to tell the config scripts to
+        # prepare the kernel with android-specific boot options. That
+        # behavior has been replaced with a more explicit option per
+        # the error message below. The disk can have any name now and
+        # doesn't need to include 'android' substring.
+        if (mdesc.disks() and
+                os.path.split(mdesc.disks()[0])[-1].lower().count('android')):
+            if 'android' not in mdesc.os_type():
+                fatal("It looks like you are trying to boot an Android " \
+                      "platform.  To boot Android, you must specify " \
+                      "--os-type with an appropriate Android release on " \
+                      "the command line.")
+
+        # android-specific tweaks
+        if 'android' in mdesc.os_type():
+            # generic tweaks
+            cmdline += " init=/init"
+
+            # release-specific tweaks
+            if 'kitkat' in mdesc.os_type():
+                cmdline += " androidboot.hardware=gem5 qemu=1 qemu.gles=0 " + \
+                           "android.bootanim=0 "
+            elif 'nougat' in mdesc.os_type():
+                cmdline += " androidboot.hardware=gem5 qemu=1 qemu.gles=0 " + \
+                           "android.bootanim=0 " + \
+                           "vmalloc=640MB " + \
+                           "android.early.fstab=/fstab.gem5 " + \
+                           "androidboot.selinux=permissive " + \
+                           "video=Virtual-1:1920x1080-16"
+
+        workload.command_line = fillInCmdline(mdesc, cmdline)
+
+        self.workload = workload
+
+        self.realview.setupBootLoader(self, binary, bootloader)
+
+    if external_memory:
+        # I/O traffic enters iobus
+        self.external_io = ExternalMaster(port_data="external_io",
+                                          port_type=external_memory)
+        self.external_io.port = self.iobus.cpu_side_ports
+
+        # Ensure iocache only receives traffic destined for (actual) memory.
+        self.iocache = ExternalSlave(port_data="iocache",
+                                     port_type=external_memory,
+                                     addr_ranges=self.mem_ranges)
+        self.iocache.port = self.iobus.mem_side_ports
+
+        # Let system_port get to nvmem and nothing else.
+        self.bridge.ranges = [self.realview.nvmem.range]
+
+        self.realview.attachOnChipIO(self.iobus)
+        # Attach off-chip devices
+        self.realview.attachIO(self.iobus)
+    elif ruby:
+        self._dma_ports = [ ]
+        self._mem_ports = [ ]
+        self.realview.attachOnChipIO(self.iobus,
+            dma_ports=self._dma_ports, mem_ports=self._mem_ports)
+        self.realview.attachIO(self.iobus, dma_ports=self._dma_ports)
+    else:
+        self.realview.attachOnChipIO(self.membus, self.bridge)
+        # Attach off-chip devices
+        self.realview.attachIO(self.iobus)
+
+    for dev in pci_devices:
+        self.realview.attachPciDevice(
+            dev, self.iobus,
+            dma_ports=self._dma_ports if ruby else None)
+
+    self.terminal = Terminal()
+    self.vncserver = VncServer()
+
+    if vio_9p:
+        attach_9p(self.realview, self.iobus)
+
+    if not ruby:
+        self.system_port = self.membus.cpu_side_ports
+
+    if ruby:
+        if buildEnv['PROTOCOL'] == 'MI_example' and num_cpus > 1:
+            fatal("The MI_example protocol cannot implement Load/Store "
+                  "Exclusive operations. Multicore ARM systems configured "
+                  "with the MI_example protocol will not work properly.")
+    
+    return self
+
+def makeDGXSystem():
+    
+	return self
 def makeLinuxMipsSystem(mem_mode, mdesc=None, cmdline=None):
     class BaseMalta(Malta):
         ethernet = NSGigE(pci_bus=0, pci_dev=1, pci_func=0)

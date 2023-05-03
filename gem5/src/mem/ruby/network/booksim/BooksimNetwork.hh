@@ -203,6 +203,7 @@ namespace booksim
 			void enqueueBooksimMessage(int pid)
 			{
 				BooksimMessage message = m_packet_map[pid];
+				
 				if(message.network_switch != nullptr)
 				{
 					message.network_switch->EnqueueMessage(message.dest,

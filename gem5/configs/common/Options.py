@@ -190,6 +190,13 @@ def addNoISAOptions(parser):
     parser.add_argument("--l2_assoc", type=int, default=8)
     parser.add_argument("--l3_assoc", type=int, default=16)
     parser.add_argument("--cacheline_size", type=int, default=64)
+    
+	# 增加
+    parser.add_argument("--lanes", type = int, default = 1)
+    parser.add_argument("--switch_up_lanes", type = int, default = 4)
+    parser.add_argument("--pcie_switch_delay", type = str, default = "150ns")
+    parser.add_argument("--switch_buffer_size", type = int, default = 16)
+    parser.add_argument("--replay_buffer_size", type = int, default = 4)
 
     # Enable Ruby
     parser.add_argument("--ruby", action="store_true")

@@ -100,8 +100,8 @@ FsWorkload::FsWorkload(const Params &p) : KernelWorkload(p)
 void
 FsWorkload::initState()
 {
+	
     KernelWorkload::initState();
-
     // Reset CP15?? What does that mean -- ali
 
     // FPEXC.EN = 0

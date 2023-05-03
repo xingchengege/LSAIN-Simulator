@@ -52,6 +52,7 @@
 		"thread": "cpp",
 		"cassert": "cpp",
 		"stack": "cpp",
-		"numeric": "cpp"
+		"numeric": "cpp",
+		"variant": "cpp"
 	}
 }

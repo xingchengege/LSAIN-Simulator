@@ -54,7 +54,7 @@ addToPath("../")
 
 from ruby import Ruby
 
-from common.FSConfig import *
+from common.FSConfig_old import *
 from common.SysPaths import *
 from common.Benchmarks import *
 from common import Simulation
@@ -80,7 +80,7 @@ def cmd_line_template():
     return None
 
 
-def build_test_system(np, _cacheline_size, _should_print = False):
+def build_test_system(np):
     cmdline = cmd_line_template()
     isa = get_runtime_isa()
     if isa == ISA.MIPS:
@@ -96,10 +96,8 @@ def build_test_system(np, _cacheline_size, _should_print = False):
             test_mem_mode, np, bm[0], args.ruby, cmdline=cmdline
         )
     elif isa == ISA.ARM:
-        # test_sys = makeArmSystem(
-        test_sys = makeANJFSystem(
+        test_sys = makeArmSystem(
             test_mem_mode,
-            args,
             args.machine_type,
             np,
             bm[0],
@@ -110,9 +108,6 @@ def build_test_system(np, _cacheline_size, _should_print = False):
             ruby=args.ruby,
             vio_9p=args.vio_9p,
             bootloader=args.bootloader,
-            #security=args.enable_security_extensions, 
-            should_print = _should_print , 
-            cacheline_size = _cacheline_size
         )
         if args.enable_context_switch_stats_dump:
             test_sys.enable_context_switch_stats_dump = True
@@ -251,7 +246,7 @@ def build_test_system(np, _cacheline_size, _should_print = False):
                 obj.eventq_index = 0
             cpu.eventq_index = i + 1
         test_sys.kvm_vm = KvmVM()
-    
+
     return test_sys
 
 
@@ -377,8 +372,8 @@ else:
         ]
 
 np = args.num_cpus
-cacheline_size = args.cacheline_size
-test_sys = build_test_system(np, cacheline_size, True)
+
+test_sys = build_test_system(np)
 
 if len(bm) == 2:
     drive_sys = build_drive_system(np)
@@ -399,7 +394,6 @@ elif len(bm) == 1 and args.dist:
     )
 elif len(bm) == 1:
     root = Root(full_system=True, system=test_sys)
-
 else:
     print("Error I don't know how to create more than 2 systems.")
     sys.exit(1)

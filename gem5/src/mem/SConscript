@@ -157,3 +157,12 @@ DebugFlag('TokenPort')
 DebugFlag("MemChecker")
 DebugFlag("MemCheckerMonitor")
 DebugFlag("QOS")
+
+#PCIe新增
+SimObject('PciBridge.py', sim_objects=['PciBridge'])
+
+Source('PciBridge.cc')
+Source('pcie_link.cc')
+
+DebugFlag('PCI_EXPRESS')
+DebugFlag('PciBridge')
