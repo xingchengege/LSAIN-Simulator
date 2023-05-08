@@ -52,7 +52,7 @@ namespace booksim{
 			int CheckInjectionQueue(int source, int cl);
 
 			//更新周期计数
-			void UpdateSimTime(int cycles);
+			void UpdateSimTime(long long cycles);
 
 			//打印数据，更新截止到当前的数据并打印它们
 			void PrintStats(std::ostream & os);

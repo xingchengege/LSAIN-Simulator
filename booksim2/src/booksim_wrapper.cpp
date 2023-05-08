@@ -49,7 +49,7 @@ namespace booksim{
 
 		//初始化路由算法、流量、注入函数
 		InitializeRoutingMap(config);
-		
+		gTrace = (config.GetInt("viewer_trace") > 0);
 		string watch_out_flie = config.GetStr("watch_out");
 
 		if(watch_out_flie == ""){
@@ -156,7 +156,7 @@ namespace booksim{
 	}
 
 	void
-	BooksimWrapper::UpdateSimTime(int cycles)
+	BooksimWrapper::UpdateSimTime(long long cycles)
 	{
 		assert(!CheckInFlightPackets());
 		_traffic_manager->UpdateSimTime(cycles);

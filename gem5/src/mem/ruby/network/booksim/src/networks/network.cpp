@@ -290,6 +290,8 @@ void Network::DumpNodeMap( ostream & os, string const & prefix ) const
        << _eject[s]->GetSource()->GetID() << ','
        << _inject[s]->GetSink()->GetID() << endl;
 }
+
+
 }
 }
 }

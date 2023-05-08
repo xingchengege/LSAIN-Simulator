@@ -48,6 +48,7 @@
 #include "anynet.hpp"
 #include "dragonfly.hpp"
 #include "ckncube.hpp"
+#include "nvidia_dgx_1.hpp"
 namespace gem5{
 namespace ruby{
 namespace booksim{
@@ -110,12 +111,15 @@ Network * Network::New(const Configuration & config, const string & name)
   } else if ( topo == "flatfly" ) {
     FlatFlyOnChip::RegisterRoutingFunctions() ;
     n = new FlatFlyOnChip( config, name );
-  } else if ( topo == "anynet"){
+  } else if ( topo == "anynet" ) {
     AnyNet::RegisterRoutingFunctions() ;
     n = new AnyNet(config, name);
-  } else if ( topo == "dragonflynew"){
+  } else if ( topo == "dragonflynew" ) {
     DragonFlyNew::RegisterRoutingFunctions() ;
     n = new DragonFlyNew(config, name);
+  } else if ( topo == "nvidiadgx1" ) {
+	NVIDIADGX1::RegisterRoutingFunctions();
+	n = new NVIDIADGX1(config, name);
   } else {
     cerr << "Unknown topology: " << topo << endl;
   }

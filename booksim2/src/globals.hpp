@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <map>
 namespace gem5{
 namespace ruby{
 namespace booksim{
@@ -54,6 +55,9 @@ extern int gNodes;
 extern bool gTrace;
 
 extern std::ostream * gWatchOut;
+
+extern std::map<int, int>* global_routing_table;
+
 }
 }
 }

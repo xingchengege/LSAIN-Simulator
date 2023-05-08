@@ -61,6 +61,8 @@ BookSimConfig::BookSimConfig( )
   AddStrField("c",""); //Workaround to allow vector specification
   AddStrField( "routing_function", "none" );
 
+  _int_map["num_dgx1"] = 1;
+
   //simulator tries to correclty adjust latency for node/router placement 
   _int_map["use_noc_latency"] = 1;
 

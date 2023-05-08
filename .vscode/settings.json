@@ -53,6 +53,14 @@
 		"cassert": "cpp",
 		"stack": "cpp",
 		"numeric": "cpp",
-		"variant": "cpp"
+		"variant": "cpp",
+		"*.in": "cpp",
+		"hash_map": "cpp",
+		"hash_set": "cpp",
+		"forward_list": "cpp",
+		"unordered_set": "cpp",
+		"regex": "cpp",
+		"valarray": "cpp",
+		"algorithm": "cpp"
 	}
 }

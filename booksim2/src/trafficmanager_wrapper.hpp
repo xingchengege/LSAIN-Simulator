@@ -49,7 +49,7 @@ namespace booksim{
 			//获取收到的Packet
 			std::pair<Flit,Flit> RetirePacket();
 			//更新周期计数
-			void UpdateSimTime(int cycles);
+			void UpdateSimTime(long long cycles);
 	        //清空网络数据
 			void ClearStats();
 

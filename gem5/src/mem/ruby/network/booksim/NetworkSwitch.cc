@@ -144,12 +144,7 @@ namespace booksim
 								Cycles inject_cycle = curCycle() - ticksToCycles(
 									                        msg_ptr->getTime()
 								                        );
-								DPRINTF(Booksim, "GeneratePacket:\n m_id: %d packet_dest: %d size: %d packet_class %d inject_cycle: %d!\n",
-								                            m_id,
-															packet_dest,
-															size,
-															packet_class,
-															inject_cycle);
+								DPRINTF(Booksim, "GeneratePacket %lld %lld %lld!\n",curCycle(), ticksToCycles(msg_ptr->getTime()),inject_cycle);
 								int pid = m_wrapper_ptr->GeneratePacket(
 									                        m_id,
 															packet_dest,
@@ -157,7 +152,6 @@ namespace booksim
 															packet_class,
 															inject_cycle
 								                        );
-								DPRINTF(Booksim, "GeneratePacket is done!\n");
 								if(pid > -1)
 								{
 									msg_dest.removeNetDest(personal_dest);
@@ -197,7 +191,7 @@ namespace booksim
 	{
 		Tick current_time = clockEdge();
 		int dest_port = m_dest_port[dest];
-		DPRINTF(Booksim, "msg dest is:%d \n", msg->getDestination());
+		// DPRINTF(Booksim, "msg dest is:%d \n", msg->getDestination());
 		m_out_buffers[dest_port][subnet]->enqueue(msg,
 		                                          current_time,
 												  cyclesToTicks(Cycles(1)));

@@ -32,7 +32,7 @@ namespace booksim
 										  int cl,
 										  long long time)
 	{
-		// cout<<"TrafficManagerWrapper: GeneratePacket!"<<endl;
+		// cout<<"TrafficManagerWrapper: GeneratePacket! "<<GetSimTime()<<' '<<time<<' '<<GetSimTime()-time<<endl;
 		return _GeneratePacket(source, dest, size, cl, GetSimTime() - time);
 	}
 	
@@ -91,7 +91,8 @@ namespace booksim
 				if(!_ejection_queue[cl][n].empty())
 				{
 					pair<Flit, Flit> rp = _ejection_queue[cl][n].front();
-
+					rp.first.dest = rp.first.dest;
+					rp.second.dest = rp.second.dest;
 					_ejection_queue[cl][n].pop();
 
 					return rp;
@@ -104,7 +105,7 @@ namespace booksim
 	}
 
 	void
-	TrafficManagerWrapper::UpdateSimTime(int cycles)
+	TrafficManagerWrapper::UpdateSimTime(long long cycles)
 	{
 		_time += cycles;
 		assert(_time);

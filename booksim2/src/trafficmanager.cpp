@@ -65,7 +65,6 @@ TrafficManager::TrafficManager( const Configuration &config, const vector<Networ
     _nodes = _net[0]->NumNodes( );
     _routers = _net[0]->NumRouters( );
 
-
     _inj_size = config.GetInt("injection_queue_size");
 	assert(_inj_size > 0);
 	
@@ -562,7 +561,7 @@ void TrafficManager::_RetireFlit( Flit *f, int dest )
                    << ")." << endl;
     }
 
-    if ( f->head && ( f->dest != dest ) ) {
+    if ( f->head && ( f->dest != _net[0]->GetActualNode(dest) ) ) {
         ostringstream err;
         err << "Flit " << f->id << " arrived at incorrect output " << dest;
         Error( err.str( ) );
@@ -648,7 +647,9 @@ void TrafficManager::_RetirePacket(Flit *head, Flit *tail)
 long TrafficManager::_GeneratePacket( int source, int dest, int size, 
                                       int cl, long long time )
 {
+
 	// cout<<"TrafficManager: _GeneratePacket!"<<endl;
+	source = _net[0]->GetVirtualNode(source);
 	if(_partial_packets[source][cl].size() >=_inj_size)
 	{
 	    return -1;

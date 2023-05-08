@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/booksim2/src"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

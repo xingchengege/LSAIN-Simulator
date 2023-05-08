@@ -96,6 +96,10 @@ public:
   virtual void Evaluate( );
   virtual void WriteOutputs( );
 
+  
+  virtual int GetVirtualNode(int node)  {return node;}
+  virtual int GetActualNode(int node)  {return node;}
+
   void Display( ostream & os = cout ) const;
   void DumpChannelMap( ostream & os = cout, string const & prefix = "" ) const;
   void DumpNodeMap( ostream & os = cout, string const & prefix = "" ) const;
