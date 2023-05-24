@@ -60,6 +60,7 @@
 #include "mem/ruby/slicc_interface/RubySlicc_Util.hh"
 #include "mem/ruby/system/RubySystem.hh"
 #include "sim/system.hh"
+#include "debug/Booksim.hh"
 
 namespace gem5
 {
@@ -557,6 +558,8 @@ Sequencer::readCallback(Addr address, DataBlock& data,
     // Free up read requests until we hit the first Write request
     // or end of the corresponding list.
     //
+	if(m_RequestTable.find(address) == m_RequestTable.end())
+	    DPRINTF(Booksim,"address: %lld MachineType: %lld\n",address,mach);
     assert(address == makeLineAddress(address));
     assert(m_RequestTable.find(address) != m_RequestTable.end());
     auto &seq_req_list = m_RequestTable[address];

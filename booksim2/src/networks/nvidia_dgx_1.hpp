@@ -8,12 +8,15 @@ DGX-1拓扑结构
 #include "routefunc.hpp"
 #include <set>
 #include <map>
+namespace gem5
+{
+	
+namespace ruby
+{
 
-namespace gem5{
+namespace booksim
+{
 
-namespace ruby{
-
-namespace booksim{
 
 	enum LinkType{
 		/*
@@ -33,27 +36,35 @@ namespace booksim{
 		bandwidth per lane = 16(GB/s)/16 = 1GB/s
 		latency per lane = 1(GHz)/ 1(GB/s) / 16(B/flit) = 16 cycles/flit
 		*/
-		PCIe_Gen3_x16 = 16,
+		PCIe_Gen3_x16 = 4,
 		/*
 		NVLink_V1:
 	    bandwidth = 20GB/s
-		bandwidth per lane = 20(GB/s)/8 = 2.5GB/s
-		latency per lane = 1(GHz)/ 2.5(GB/s) / 16(B/flit) = 6.4 cycles/flit ≈ 6 cycles/flit
+		latency per lane = 3(GHz)/ 20(GB/s) / 16(B/flit) = 6.4 cycles/flit ≈ 6 cycles/flit
 		*/
-		NVLink_V1 = 6,
+		NVLink_V1 = 3,
 		/*
 	    NVLink_V2:
 	    bandwidth = 25GB/s
-		bandwidth per lane = 25(GB/s)/8 = 3.125GB/s
-		latency per lane = 1(GHz)/ 3.125(GB/s) / 16(B/flit) = 5.12 cycles/flit ≈ 5 cycles/flit
+		latency per lane = 3(GHz)/ 50(GB/s) / 16(B/flit) = 0.96 cycles/flit ≈ 1 cycles/flit
 	    */
-		NVLink_V2 = 5,
-		QPI = 16
+		NVLink_V2 = 1,
+		QPI = 4
+	};
+
+	/*the version of NVIDIADGX-1*/
+	enum version{
+		/*V100-DGX-1*/
+		P100 = 0,
+		/*P100-DGX-1*/
+		V100
 	};
 	
 	class NVIDIADGX1: public Network
 	{
 		private:
+		    // DGX1的版本
+		    version _v;
 		    // DGX1的数量
 		    int num_dgx1;
 			//GPU节点列表
@@ -95,9 +106,9 @@ namespace booksim{
 
 			void _buildTopology();
 
-			int _getLanesNum(BusLatency bus);
+			// int _getLanesNum(BusLatency bus);
 
-			int _getRouterPortsNum(int router);
+			// int _getRouterPortsNum(int router);
 
 		public:
 			NVIDIADGX1( const Configuration& config, const string &name );
@@ -116,9 +127,11 @@ namespace booksim{
 
 	void nccl_nvidiadgx1( const Router *r, const Flit *f, int in_channel,
 	                   OutputSet *outputs, bool inject);
+		
     pair<int,int> next_hop(int x, int y);
 	int dep(int x);
 }
+
 }
 }
 #endif

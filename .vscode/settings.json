@@ -61,6 +61,21 @@
 		"unordered_set": "cpp",
 		"regex": "cpp",
 		"valarray": "cpp",
-		"algorithm": "cpp"
+		"algorithm": "cpp",
+		"random": "cpp",
+		"*.inc": "cpp",
+		"csetjmp": "cpp",
+		"csignal": "cpp",
+		"cstdarg": "cpp",
+		"any": "cpp",
+		"strstream": "cpp",
+		"cinttypes": "cpp",
+		"codecvt": "cpp",
+		"complex": "cpp",
+		"iterator": "cpp",
+		"memory_resource": "cpp",
+		"shared_mutex": "cpp",
+		"cfenv": "cpp",
+		"typeindex": "cpp"
 	}
 }

@@ -200,7 +200,8 @@ Throttle::operateVnet(int vnet, int channel, int &total_bw_remaining,
             in->dequeue(current_time);
             out->enqueue(msg_ptr, current_time,
                          m_switch->cyclesToTicks(m_link_latency));
-
+			
+			
             // Count the message
             (*(throttleStats.
                 msg_counts[net_msg_ptr->getMessageSize()]))[vnet]++;

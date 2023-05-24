@@ -42,7 +42,7 @@ addToPath("../")
 
 from topologies.Cluster import Cluster
 from topologies.Crossbar import Crossbar
-
+from topologies.Mesh_XY_GPU import Mesh_XY_GPU
 
 class CntrlBase:
     _seqs = 0
@@ -489,6 +489,12 @@ def define_options(parser):
         help="Size of the mandatory queue in the GPU scalar "
         "cache controller",
     )
+    parser.add_argument(
+        "--cu-per-unit",
+        type=int,
+        default=4,
+        help=""
+	)
 
 
 def construct_dirs(options, system, ruby_system, network):
@@ -928,25 +934,38 @@ def create_system(
     mainCluster = None
     cpuCluster = None
     gpuCluster = None
-
+    gpuMemCluster = None
+    cpuMemCluster = None
+    singleGPU = []
+    all_cntrls = []
     if hasattr(options, "bw_scalor") and options.bw_scalor > 0:
         # Assuming a 2GHz clock
         crossbar_bw = 16 * options.num_compute_units * options.bw_scalor
         mainCluster = Cluster(intBW=crossbar_bw)
-        cpuCluster = Cluster(extBW=crossbar_bw, intBW=crossbar_bw)
-        gpuCluster = Cluster(extBW=crossbar_bw, intBW=crossbar_bw)
+        cpuCluster = Cluster(name="cpuCluster", extBW=crossbar_bw, intBW=crossbar_bw)
+        gpuCluster = Cluster(name="gpuCluster", extBW=crossbar_bw, intBW=crossbar_bw)
+        gpuMemCluster = Cluster(name="gpuMemCluster", extBW=crossbar_bw, intBW=crossbar_bw)  # 16 GB/s
+        cpuMemCluster = Cluster(name="cpuMemCluster", extBW=crossbar_bw, intBW=crossbar_bw)  # 16 GB/s
     else:
         mainCluster = Cluster(intBW=8)  # 16 GB/s
-        cpuCluster = Cluster(extBW=8, intBW=8)  # 16 GB/s
-        gpuCluster = Cluster(extBW=8, intBW=8)  # 16 GB/s
+        cpuCluster = Cluster(name="cpuCluster", extBW=8, intBW=8)  # 16 GB/s
+        gpuCluster = Cluster(name="gpuCluster", extBW=8, intBW=8)  # 16 GB/s
+        gpuMemCluster = Cluster(name="gpuMemCluster", extBW=8, intBW=8)  # 16 GB/s
+        cpuMemCluster = Cluster(name="cpuMemCluster", extBW=8, intBW=8)  # 16 GB/s
+        
 
     # Create CPU directory controllers
     dir_cntrl_nodes = construct_dirs(
         options, system, ruby_system, ruby_system.network
     )
+    cnt = 0
     for dir_cntrl in dir_cntrl_nodes:
-        mainCluster.add(dir_cntrl)
-
+        if cnt < options.num_dirs//2:
+            gpuMemCluster.add(dir_cntrl)
+        else:
+            cpuMemCluster.add(dir_cntrl)
+        cnt += 1
+    
     # Create CPU core pairs
     (cp_sequencers, cp_cntrl_nodes) = construct_corepairs(
         options, system, ruby_system, ruby_system.network
@@ -1023,39 +1042,86 @@ def create_system(
         options, system, ruby_system, ruby_system.network
     )
     cpu_sequencers.extend(tcp_sequencers)
-    for tcp_cntrl in tcp_cntrl_nodes:
-        gpuCluster.add(tcp_cntrl)
-
+    # gpuIndex = 0
+    # cu_per_unit = options.cu_per_unit
+    # for (i,tcp_cntrl) in enumerate(tcp_cntrl_nodes):
+    #     if i % cu_per_unit == 0:
+    #         singleGPU.append(Cluster())
+    #     singleGPU[-1].add(tcp_cntrl)
+        # gpuIndex += 1
+        # gpuCluster.add(tcp_cntrl)
+    cu_per_unit = options.cu_per_unit
+    for (i,tcp_cntrl) in enumerate(tcp_cntrl_nodes):
+        if i % cu_per_unit == 0:
+            singleGPU.append(Cluster())
+        singleGPU[-1].add(tcp_cntrl)
+	
+	
+	
     # Create SQCs
     (sqc_sequencers, sqc_cntrl_nodes) = construct_sqcs(
         options, system, ruby_system, ruby_system.network
     )
     cpu_sequencers.extend(sqc_sequencers)
-    for sqc_cntrl in sqc_cntrl_nodes:
-        gpuCluster.add(sqc_cntrl)
+    # gpuIndex = 0
+    for (i,sqc_cntrl) in enumerate(sqc_cntrl_nodes):
+        # j, k = divmod(i, len(singleGPU))
+        singleGPU[0].add(sqc_cntrl)
+        # gpuIndex += 1
+        # gpuCluster.add(sqc_cntrl)
+	
 
-    # Create Scalars
+	# Create Scalars
     (scalar_sequencers, scalar_cntrl_nodes) = construct_scalars(
         options, system, ruby_system, ruby_system.network
     )
     cpu_sequencers.extend(scalar_sequencers)
-    for scalar_cntrl in scalar_cntrl_nodes:
-        gpuCluster.add(scalar_cntrl)
-
+    # gpuIndex = 0
+    # gpuIndex = 0
+    # for (i,scalar_cntrl) in enumerate(scalar_cntrl_nodes):
+        # if i % cu_per_unit == 0:
+        #    gpuIndex += 1
+        # singleGPU[gpuIndex].add(scalar_cntrl)
+        # gpuIndex += 1
+        # gpuCluster.add(scalar_cntrl)
+	
+    scalar_cntrl_id = 0
+    for (i,gpu) in enumerate(singleGPU):
+        for x in range(len(scalar_cntrl_nodes)//len(singleGPU)):
+          gpu.add(scalar_cntrl_nodes[scalar_cntrl_id])
+          scalar_cntrl_id += 1 
+            
+    
     # Create command processors
     (cmdproc_sequencers, cmdproc_cntrl_nodes) = construct_cmdprocs(
         options, system, ruby_system, ruby_system.network
     )
     cpu_sequencers.extend(cmdproc_sequencers)
-    for cmdproc_cntrl in cmdproc_cntrl_nodes:
-        gpuCluster.add(cmdproc_cntrl)
+    # gpuIndex = 0
+    for (i,cmdproc_cntrl) in enumerate(cmdproc_cntrl_nodes):
+        j, k = divmod(i, cu_per_unit)
+        singleGPU[j].add(cmdproc_cntrl)
+        # gpuIndex += 1
+        # gpuCluster.add(cmdproc_cntrl)
 
     # Create TCCs
     tcc_cntrl_nodes = construct_tccs(
         options, system, ruby_system, ruby_system.network
     )
-    for tcc_cntrl in tcc_cntrl_nodes:
-        gpuCluster.add(tcc_cntrl)
+    # gpuIndex = 0
+    # gpuIndex = 0
+    # for (i,tcc_cntrl) in enumerate(tcc_cntrl_nodes):
+    #     if i % cu_per_unit == 0:
+    #        gpuIndex += 1
+    #     	# print(j)
+    #     singleGPU[gpuIndex].add(tcc_cntrl)
+        # gpuIndex += 1
+        # gpuCluster.add(tcc_cntrl)
+    tcc_cntrl_id = 0
+    for (i,gpu) in enumerate(singleGPU):
+        for x in range(len(tcc_cntrl_nodes)//len(singleGPU)):
+          gpu.add(tcc_cntrl_nodes[tcc_cntrl_id])
+          tcc_cntrl_id += 1 
 
     for i, dma_device in enumerate(dma_devices):
         dma_seq = DMASequencer(version=i, ruby_system=ruby_system)
@@ -1083,12 +1149,30 @@ def create_system(
         dma_cntrl.responseFromDir = MessageBuffer(buffer_size=0)
         dma_cntrl.responseFromDir.in_port = ruby_system.network.out_port
         dma_cntrl.mandatoryQueue = MessageBuffer(buffer_size=0)
-        gpuCluster.add(dma_cntrl)
-
+        singleGPU[0].add(dma_cntrl)
+        # gpuCluster.add(dma_cntrl)
+    # gpuIndex = 0
+    # for (i,dir_cntrl) in enumerate(dir_cntrl_nodes):
+        # j, k = divmod(i, cu_per_unit)
+        # cpuCluster.add(dir_cntrl)
+        # gpuIndex += 1
+        # mainCluster.add(dir_cntrl)
+    for gpu in singleGPU:
+        gpuCluster.add(gpu)
+    all_cntrls=[]
+    all_cntrls.append(cpuCluster)
+    all_cntrls.append(gpuCluster)
+    all_cntrls.append(gpuMemCluster)
+    all_cntrls.append(cpuMemCluster)
+    # all_cntrls ={
+        # cp_cntrl_nodes + dir_cntrl_nodes 
+	# )
+	# all_cntrls.append(gpuCluster)
     # Add cpu/gpu clusters to main cluster
-    mainCluster.add(cpuCluster)
-    mainCluster.add(gpuCluster)
+    # mainCluster.add(cpuCluster)
+    # mainCluster.add(gpuCluster)
 
     ruby_system.network.number_of_virtual_networks = 11
+    topology = create_topology(all_cntrls, options)
 
-    return (cpu_sequencers, dir_cntrl_nodes, mainCluster)
+    return (cpu_sequencers, dir_cntrl_nodes, topology)

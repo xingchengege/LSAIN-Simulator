@@ -7,7 +7,17 @@ cscope.out
 *~
 .*.swp
 .*.swo
+*.a
 m5out
+halo_finder_result
+halo_finder_result_p100dgx1
+halo_finder_result_v100dgx1
+lulesh_result_p100dgx1
+lulesh_result_v100dgx1
+square_result_p100dgx1
+square_result_v100dgx1
+experiment_out
+multicore_out
 /src/doxygen/html
 /ext/dramsim2/DRAMSim2
 /ext/mcpat/regression/*/*.out

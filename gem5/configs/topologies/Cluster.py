@@ -54,7 +54,7 @@ class Cluster(BaseTopology):
         cls._num_routers += 1
         return cls._num_routers - 1
 
-    def __init__(self, intBW=0, extBW=0, intLatency=0, extLatency=0):
+    def __init__(self, name="", intBW=0, extBW=0, intLatency=0, extLatency=0):
         """internalBandwidth is bandwidth of all links within the cluster
         externalBandwidth is bandwidth from this cluster to any cluster
             connecting to it.
@@ -69,10 +69,17 @@ class Cluster(BaseTopology):
         self.extBW = extBW
         self.intLatency = intLatency
         self.extLatency = extLatency
+        self.name = name
 
     def add(self, node):
         self.nodes.append(node)
-
+    
+    def getAllNodes(self):
+        return self.nodes
+    
+    def getClusterName(self):
+        return self.name
+            
     def makeTopology(self, options, network, IntLink, ExtLink, Router):
         """Recursively make all of the links and routers"""
 

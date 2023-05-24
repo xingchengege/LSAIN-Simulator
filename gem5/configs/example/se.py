@@ -144,13 +144,18 @@ if args.bench:
                     "workload = %s('arm_%s', 'linux', '%s')"
                     % (app, args.arm_iset, args.spec_input)
                 )
+                
             else:
                 # TARGET_ISA has been removed, but this is missing a ], so it
                 # has incorrect syntax and wasn't being used anyway.
-                exec(
-                    "workload = %s(buildEnv['TARGET_ISA', 'linux', '%s')"
-                    % (app, args.spec_input)
-                )
+                # exec(
+                    # "workload = %s(buildEnv['TARGET_ISA'], 'linux', '%s')"
+                    # % (app, args.spec_input)
+                # )
+                isa = get_runtime_isa()
+                # print("class: %s" % art470.__name__)
+                workload = vpr_place('X86', 'linux', args.spec_input)
+                print(workload)
             multiprocesses.append(workload.makeProcess())
         except:
             print(

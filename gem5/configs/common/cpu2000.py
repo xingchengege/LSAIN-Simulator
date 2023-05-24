@@ -95,6 +95,8 @@ class Benchmark(object):
                 "The benchmark %s does not have the %s input set"
                 % (self.name, input_set)
             )
+        
+        print(joinpath(spec_dist, "binaries", isa, os, self.binary))
 
         executable = joinpath(spec_dist, "binaries", isa, os, self.binary)
         if not isfile(executable):
@@ -110,7 +112,7 @@ class Benchmark(object):
         outputs_dir = joinpath(data_dir, input_set, "output")
         # keep around which input set was specified
         self.input_set = input_set
-
+        
         if not isdir(inputs_dir):
             raise AttributeError("%s not found" % inputs_dir)
 

@@ -28,6 +28,8 @@ namespace booksim
 			NetworkSwitch(const Params & p);
 			~NetworkSwitch();
 
+			int _internal_speedup;
+
 			void init();
 			void addInPort(const std::vector<MessageBuffer*> & in);
 
@@ -41,14 +43,20 @@ namespace booksim
 			void regStats();
 
 			void print(std::ostream & out) const;
-			void init_net_ptr(BooksimNetwork* net_ptr)
+			void init_net_ptr(BooksimNetwork* net_ptr, int speedup)
 			{
 				m_wrapper_ptr = net_ptr;
+				_internal_speedup = speedup;
 			}
 
 			void ReadMessage();
 
 			void EnqueueMessage(int dest, int subnetwork, MsgPtr msg);
+
+
+
+
+			 
 		private:
 		    NetworkSwitch(const NetworkSwitch & obj);
 			NetworkSwitch & operator=(const NetworkSwitch & obj);
@@ -64,6 +72,10 @@ namespace booksim
 
 			// Round Robin
 			int m_last_port;
+
+
+
+
 	};
 	
 	inline std::ostream&

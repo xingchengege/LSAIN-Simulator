@@ -363,7 +363,6 @@ Ruby.define_options(parser)
 GPUTLBOptions.tlb_options(parser)
 
 args = parser.parse_args()
-
 # The GPU cache coherence protocols only work with the backing store
 args.access_backing_store = True
 
@@ -596,7 +595,6 @@ if fast_forward:
     MainCpuClass = FutureCpuClass
 else:
     MainCpuClass = CpuClass
-
 # CPs to be used throughout the simulation.
 for i in range(args.num_cp):
     cp = MainCpuClass(
@@ -607,7 +605,6 @@ for i in range(args.num_cp):
         ),
     )
     cp_list.append(cp)
-
 # Main CPUs (to be used after fast-forwarding if fast-forwarding is specified).
 for i in range(args.num_cpus):
     cpu = MainCpuClass(
@@ -728,6 +725,7 @@ for cpu in cpu_list:
     cpu.workload = process
 
 for cp in cp_list:
+    # cp.creatThreads()
     cp.workload = host_cpu.workload
 
 if fast_forward:
@@ -750,6 +748,8 @@ for (i, cpu) in enumerate(cpu_list):
 # Full list of processing cores in the system.
 cpu_list = cpu_list + [shader] + cp_list
 
+# for i in cpu_list:
+    # print(len(i.isa))
 # creating the overall system
 # notice the cpu list is explicitly added as a parameter to System
 system = System(
@@ -839,8 +839,13 @@ gpu_port_idx = gpu_port_idx - args.num_cp * 2
 # sequencers, since the TCP coalescers will not necessarily be first. Only
 # TCP coalescers use a token port for back pressure.
 token_port_idx = 0
+
+# for i in system.ruby._cpu_ports:
+#     print(i)
 for i in range(len(system.ruby._cpu_ports)):
+    
     if isinstance(system.ruby._cpu_ports[i], VIPERCoalescer):
+        print(system.ruby._cpu_ports[i])
         system.cpu[shader_idx].CUs[
             token_port_idx
         ].gmTokenPort = system.ruby._cpu_ports[i].gmTokenPort
@@ -851,6 +856,7 @@ for i in range(n_cu):
     # The pipeline issues wavefront_size number of uncoalesced requests
     # in one GPU issue cycle. Hence wavefront_size mem ports.
     for j in range(wavefront_size):
+        # print(system.ruby._cpu_ports[gpu_port_idx])
         system.cpu[shader_idx].CUs[i].memory_port[j] = system.ruby._cpu_ports[
             gpu_port_idx
         ].in_ports[j]
@@ -860,6 +866,7 @@ for i in range(n_cu):
     if i > 0 and not i % args.cu_per_sqc:
         print("incrementing idx on ", i)
         gpu_port_idx += 1
+    # print(system.ruby._cpu_ports[gpu_port_idx])
     system.cpu[shader_idx].CUs[i].sqc_port = system.ruby._cpu_ports[
         gpu_port_idx
     ].in_ports
@@ -869,6 +876,7 @@ for i in range(n_cu):
     if i > 0 and not i % args.cu_per_scalar_cache:
         print("incrementing idx on ", i)
         gpu_port_idx += 1
+    # print(system.ruby._cpu_ports[gpu_port_idx])
     system.cpu[shader_idx].CUs[i].scalar_port = system.ruby._cpu_ports[
         gpu_port_idx
     ].in_ports
@@ -955,7 +963,10 @@ if args.checkpoint_dir != None or args.checkpoint_restore != None:
     fatal("Checkpointing not supported by apu model")
 
 checkpoint_dir = None
+# for i in range(len(system.cpu))
+    # print(len(system.cpu[i].isa))
 m5.instantiate(checkpoint_dir)
+# print(len(system.cpu[0].isa))
 
 # Map workload to this address space
 host_cpu.workload[0].map(0x10000000, 0x200000000, 4096)

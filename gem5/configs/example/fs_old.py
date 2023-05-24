@@ -64,7 +64,7 @@ from common import MemConfig
 from common import ObjectList
 from common.Caches import *
 from common import Options
-
+from common.cores.arm import O3_ARM_v7a, HPI
 
 def cmd_line_template():
     if args.command_line and args.command_line_file:

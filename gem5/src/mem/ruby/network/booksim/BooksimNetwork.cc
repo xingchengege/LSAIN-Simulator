@@ -18,19 +18,27 @@ namespace booksim
 		m_wakeup_cycles = 0;
 
 		m_switchID.resize(m_nodes);
+		
 
+		_internal_speedup = p.booksim_speedup;
+		_internal_cycles = 0;
 		for(std::vector<BasicRouter*>::const_iterator i = p.routers.begin();
 		    i != p.routers.end();
 			i++)
 		{
 			NetworkSwitch* s = safe_cast<NetworkSwitch*> (*i);
-			s->init_net_ptr(this);
+			s->init_net_ptr(this,_internal_speedup);
 			m_switches.push_back(s);
 		}
 
 		_number_switches = m_switches.size();
 
+
+		
+
 		m_booksim_wrapper = new BooksimWrapper(p.booksim_config);
+
+		
 		// DPRINTF(Booksim, "BooksimNetwork is ok!\n");
 	}
 
@@ -138,20 +146,24 @@ namespace booksim
 	}
 
 	void
-	BooksimNetwork::RunCycles(int cycles)
+	BooksimNetwork::RunNetwork()
 	{
 		
-		incTotalCycles();
+		_internal_cycles += _internal_speedup;
+		while(_internal_cycles >= 1.0){
+			incTotalCycles();
 
-		for (int i = 0; i < m_switches.size(); i++){
-			m_switches[i]->ReadMessage();
-		}
-		
-		// DPRINTF(Booksim, "ReadMessage is done!\n");
-		m_booksim_wrapper->RunCycles(cycles);
-		// DPRINTF(Booksim, "RunCycles is done!\n");
-		RetirePackets();
-		// DPRINTF(Booksim, "RetirePackets is done!\n");
+			for (int i = 0; i < m_switches.size(); i++){
+				m_switches[i]->ReadMessage();
+			}
+			
+			// DPRINTF(Booksim, "ReadMessage is done!\n");
+			m_booksim_wrapper->RunCycles(1);
+			// DPRINTF(Booksim, "RunCycles is done!\n");
+			RetirePackets();
+			_internal_cycles -= 1;
+			// DPRINTF(Booksim, "RetirePackets is done!\n");
+	    }
 	}
 	bool 
 	BooksimNetwork::functionalRead(Packet* pkt)
@@ -234,6 +246,68 @@ namespace booksim
 		    .name(name() + ".avg_inject_packets")
 			.desc("Avg. inject packets")
 			;
+		
+		
+		// for(auto i = avg_node_to_node_latency.begin();
+		//     i != avg_node_to_node_latency.end();
+		// 	i++)
+		// {
+		// 	i->resize(_number_switches);
+		// }
+		// gem5::Stats::Scalar t;
+		// total_node_to_node_latency.resize(_number_switches,std::vector<gem5::Stats::Scalar>(_number_switches,t));
+		for(int i = 0; i < _number_switches; i++)
+		{
+			total_node_to_node_latency.push_back(std::vector<gem5::statistics::Scalar *>());
+			for(int j = 0; j < _number_switches; j++){
+				// 
+				std::string stats_name = name()+".total_latency_node"+std::to_string(i)+"_to_node"+std::to_string(j);
+				gem5::statistics::Scalar *t = new gem5::statistics::Scalar(
+                    nullptr, stats_name.c_str());
+				total_node_to_node_latency[i].push_back(t);
+				// total_node_to_node_latency[i][j]
+				//     .name(name() + ".total_latency_node"+std::to_string(i)+"_to_node"+std::to_string(j))
+				// 	.desc("")
+				// 	;
+				
+			}
+		}
+
+
+
+		for(int i = 0; i < _number_switches; i++)
+		{
+			total_node_to_node_packets.push_back(std::vector<gem5::statistics::Scalar *>());
+			for(int j = 0; j < _number_switches; j++){
+				std::string stats_name = name()+".total_packets_node"+std::to_string(i)+"_to_node"+std::to_string(j);
+				gem5::statistics::Scalar *t = new gem5::statistics::Scalar(
+                    nullptr, stats_name.c_str());
+				total_node_to_node_packets[i].push_back(t);
+				// total_node_to_node_packets[i][j]
+				    // .name(name() + ".total_packets_node"+std::to_string(i)+"_to_node"+std::to_string(j))
+					// .desc("")
+					// ;
+				
+			}
+		}
+
+
+		for(int i = 0; i < _number_switches; i++)
+		{
+			avg_node_to_node_latency.push_back(std::vector<gem5::statistics::Formula *>());
+			for(int j = 0; j < _number_switches; j++){
+				std::string stats_name = name() + ".avg_latency_node"+std::to_string(i)+"_to_node"+std::to_string(j);
+				gem5::statistics::Formula *t = new gem5::statistics::Formula(
+                    nullptr, stats_name.c_str());
+				*t = *total_node_to_node_latency[i][j] / *total_node_to_node_packets[i][j];
+				avg_node_to_node_latency[i].push_back(t);
+				// avg_node_to_node_latency[i][j]
+				//     .name(name() + ".avg_latency_node"+std::to_string(i)+"_to_node"+std::to_string(j))
+				// 	.desc("")
+				// 	;
+				
+			}
+		}
 		avg_plat = total_packet_lat / total_accept_packets;
 		avg_nlat = total_network_lat / total_accept_packets;
 		avg_throughput = total_accept_flits/ total_cycles / _number_switches;

@@ -32,6 +32,9 @@ namespace booksim
 			MsgPtr msg;
 		};
 		private:
+
+		    int _internal_speedup;
+			int _internal_cycles;
 		    std::vector<NetworkSwitch *> m_switches;
 			int _number_switches;
 
@@ -51,7 +54,7 @@ namespace booksim
 
 			//存储packet ID与message的映射，
 			//并在packet到达目的地时将message发送给目的地
-			std::map<int, BooksimMessage> m_packet_map;
+			std::map<long, BooksimMessage> m_packet_map;
 
 			void RetirePackets()
 			{
@@ -60,7 +63,7 @@ namespace booksim
 				do{
 				    rp = m_booksim_wrapper->RetirePacket();
 					if(rp.pid > -1){
-						updatePacketStats(rp.plat, rp.nlat, rp.hops, rp.psize);
+						updatePacketStats(rp.plat, rp.nlat, rp.hops, rp.psize, rp.src, rp.dest);
 						enqueueBooksimMessage(rp.pid);
 					}
 				}while(rp.pid != -1);
@@ -71,14 +74,17 @@ namespace booksim
 				total_cycles++;
 			}
 
-			void updatePacketStats(int p_lat, int n_lat, int hops, int packet_size)
+			void updatePacketStats(int p_lat, int n_lat, int hops, int packet_size, int src, int dest)
 			{
-				total_packet_lat += p_lat;
-				total_network_lat += n_lat;
+				total_packet_lat += (p_lat+_internal_speedup - 1)/_internal_speedup;
+				total_network_lat += (n_lat+_internal_speedup - 1)/_internal_speedup;
 				total_hops += hops;
 				total_accept_flits += packet_size;
 				total_accept_packets++;
+				(*total_node_to_node_latency[src][dest]) += (p_lat+_internal_speedup - 1)/_internal_speedup;
+				(*total_node_to_node_packets[src][dest]) ++;
 			}
+
 
 			
 		public:
@@ -87,7 +93,7 @@ namespace booksim
 			BooksimNetwork(const Params & p);
 			~BooksimNetwork();
 
-			int GeneratePacket(int source, int dest, int size, int cl,
+			long GeneratePacket(int source, int dest, int size, int cl,
 		                       long long time)
 			{
 				return m_booksim_wrapper->GeneratePacket(source,
@@ -97,7 +103,7 @@ namespace booksim
 														 time);
 			}
 
-			void RunCycles(int cycles);
+			void RunNetwork();
 
 			bool CheckInFlightPackets()
 			{
@@ -160,7 +166,9 @@ namespace booksim
 			gem5::Stats::Formula avg_inject_flits;
 			gem5::Stats::Formula avg_inject_packets;
 			
-
+			std::vector<std::vector<gem5::statistics::Formula *>> avg_node_to_node_latency;
+			std::vector<std::vector<gem5::statistics::Scalar *>> total_node_to_node_latency;
+			std::vector<std::vector<gem5::statistics::Scalar *>> total_node_to_node_packets; 
 			void updateInjectStats(int packet_size){
 				total_inject_flits += packet_size;
 				total_inject_packets++;
@@ -186,7 +194,7 @@ namespace booksim
 
 			//设置packet与message的映射
 			void putBooksimMessage(NetworkSwitch * switch_ptr,
-			                       int pid,
+			                       long pid,
 								   NodeID destID,
 								   int subnet,
 								   MsgPtr msg,

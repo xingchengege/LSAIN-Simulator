@@ -61,7 +61,7 @@ namespace booksim
 
 		if(m_wrapper_ptr->getLastWakeupCycle() <= current_cycle)
 		{
-			m_wrapper_ptr->RunCycles(1);
+			m_wrapper_ptr->RunNetwork();
 
 			if(m_wrapper_ptr->CheckInFlightPackets()){
 				scheduleEvent(Cycles(1));

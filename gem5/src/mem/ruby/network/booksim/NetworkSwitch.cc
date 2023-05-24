@@ -3,6 +3,8 @@
 #include "mem/ruby/network/booksim/NetworkSwitch.hh"
 #include "mem/ruby/network/booksim/NetworkInterface.hh"
 #include "mem/ruby/network/booksim/BooksimNetwork.hh"
+// #include "mem/ruby/protocol/ResponseMsg.hh"
+#include "debug/BooksimSwitch.hh"
 namespace gem5
 {
 
@@ -65,6 +67,31 @@ namespace booksim
 		{
 			m_dest_port[*dest] = m_out_buffers.size() - 1;
 		}
+		if(m_id == 3)
+		{NodeID destID=all_dest[0];
+		for(int m = 0; m < (int) MachineType_NUM; m++)
+		{
+			if((destID >= 
+				MachineType_base_number(
+					(MachineType) m)) &&
+					destID < MachineType_base_number(
+					(MachineType) (m+1))
+										
+				){
+					std::cout<<"Link NodeID:"<<destID<<" MachineID: "<<(MachineID){
+												    (MachineType) m, (destID -
+													MachineType_base_number(
+														(MachineType) m))}<<std::endl;
+					// DPRINTF(Booksim, "Link NodeID: %d MachineType: %d MachineID: %d\n",
+					                // NodeID, (MachineType) m, (MachineID){
+									// 			    (MachineType) m, (destID -
+									// 				MachineType_base_number(
+									// 					(MachineType) m))});
+						
+					break;
+				}
+		}}
+		// DPRINTF(Booksim, "In: ",)
 	}
 	//
 	void
@@ -134,6 +161,7 @@ namespace booksim
 									}
 								}
 
+
 								NodeID packet_dest = all_dest[dest_index];
 								packet_dest = m_wrapper_ptr->
 								    TranslateSwitchID(packet_dest);
@@ -143,30 +171,45 @@ namespace booksim
 
 								Cycles inject_cycle = curCycle() - ticksToCycles(
 									                        msg_ptr->getTime()
-								                        );
-								DPRINTF(Booksim, "GeneratePacket %lld %lld %lld!\n",curCycle(), ticksToCycles(msg_ptr->getTime()),inject_cycle);
-								int pid = m_wrapper_ptr->GeneratePacket(
-									                        m_id,
-															packet_dest,
-															size,
-															packet_class,
-															inject_cycle
-								                        );
+								                        ) ;
+								
+								// if(dynamic_cast<ResponseMsg*>(net_msg_ptr)!=nullptr&&dynamic_cast<ResponseMsg*>(net_msg_ptr)->getaddr()==26906624)
+									DPRINTF(Booksim, "GeneratePacket:\n  src: %lld \n dest: %lld \n  size: %lld \n packet_class: %lld\n inject_cycle: %lld\n",
+											m_id,packet_dest,size,packet_class,inject_cycle);
+								long pid = -1;
+								if( m_id != packet_dest){
+									pid = m_wrapper_ptr->GeneratePacket(
+																m_id,
+																packet_dest,
+																size,
+																packet_class,
+																inject_cycle * _internal_speedup
+															);
+								}
+								else{
+									pid = 1;
+								}
+
 								if(pid > -1)
 								{
-									msg_dest.removeNetDest(personal_dest);
-
-									net_msg_ptr->getDestination().removeNetDest(
-										            personal_dest
-								 	                );
-									m_wrapper_ptr->updateInjectStats(size);
-									m_wrapper_ptr->putBooksimMessage(this,
-									                                 pid,
-																	 destID,
-																	 vn,
-																	 new_msg_ptr,
-																	 packet_dest);
 									
+									msg_dest.removeNetDest(personal_dest);
+									net_msg_ptr->getDestination().removeNetDest(
+														personal_dest
+														);
+									if(m_id != packet_dest){
+										m_wrapper_ptr->updateInjectStats(size);
+										m_wrapper_ptr->putBooksimMessage(this,
+																		pid,
+																		destID,
+																		vn,
+																		new_msg_ptr,
+																		packet_dest);
+									}
+									else{
+										DPRINTF(BooksimSwitch,"src: %d, dest: %d, vn %d",m_id, destID, vn);
+										EnqueueMessage(destID, vn, new_msg_ptr);
+									}
 									dequeue_msg = true;
 								}
 							}
@@ -192,16 +235,18 @@ namespace booksim
 		Tick current_time = clockEdge();
 		int dest_port = m_dest_port[dest];
 		// DPRINTF(Booksim, "msg dest is:%d \n", msg->getDestination());
+		// auto net_msg_ptr = msg.get();
+		// if(dynamic_cast<ResponseMsg*>(net_msg_ptr)!=nullptr&&dynamic_cast<ResponseMsg*>(net_msg_ptr)->getaddr()==26906624){
+				// DPRINTF(Booksim, "AcceptPacket:\n  src: %lld \n dest: %lld \n",
+									// m_id,dest);
+				// if(dest==22){dest_port=m_dest_port[30];std::cout<<30<<std::endl;}
+		// }
+							
 		m_out_buffers[dest_port][subnet]->enqueue(msg,
 		                                          current_time,
 												  cyclesToTicks(Cycles(1)));
 	}
 
-	void
-	NetworkSwitch::regStats()
-	{
-		BasicRouter::regStats();
-	}
 
 	void
 	NetworkSwitch::resetStats()
@@ -219,6 +264,15 @@ namespace booksim
 	NetworkSwitch::print(std::ostream& out) const
 	{
 		out << "[NetworkSwitch " << m_id << "]";
+	}
+
+
+	void
+	NetworkSwitch::regStats()
+	{
+		BasicRouter::regStats();
+		
+		
 	}
 			
 }

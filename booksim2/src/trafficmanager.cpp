@@ -540,6 +540,7 @@ TrafficManager::~TrafficManager( )
 void TrafficManager::_RetireFlit( Flit *f, int dest )
 {
     _deadlock_timer = 0;
+	f->src = _net[0]->GetActualNode(f->src);
 
     assert(_total_in_flight_flits[f->cl].count(f->id) > 0);
     _total_in_flight_flits[f->cl].erase(f->id);
@@ -649,7 +650,9 @@ long TrafficManager::_GeneratePacket( int source, int dest, int size,
 {
 
 	// cout<<"TrafficManager: _GeneratePacket!"<<endl;
+	// cout<<"actual source: "<<source;
 	source = _net[0]->GetVirtualNode(source);
+	// cout<<" virtual source: "<<source<<" actual dest: "<<dest<<" time:"<<time<<endl;
 	if(_partial_packets[source][cl].size() >=_inj_size)
 	{
 	    return -1;
@@ -874,12 +877,13 @@ void TrafficManager::_Step( )
                         }
                         set<OutputSet::sSetElement> const sl = cf->la_route_set.GetSet();
                         assert(sl.size() == 1);
+
                         int next_output = sl.begin()->output_port;
                         vc_count /= router->NumOutputs();
                         vc_start += next_output * vc_count;
                         vc_end = vc_start + vc_count - 1;
-						// cout<<vc_start<<' '<<vc_end<<' '<<se.vc_start<<' '<<se.vc_end<<endl;
-                        assert(vc_start >= se.vc_start && vc_start <= se.vc_end);
+						
+						assert(vc_start >= se.vc_start && vc_start <= se.vc_end);
                         assert(vc_end >= se.vc_start && vc_end <= se.vc_end);
                         assert(vc_start <= vc_end);
                     }

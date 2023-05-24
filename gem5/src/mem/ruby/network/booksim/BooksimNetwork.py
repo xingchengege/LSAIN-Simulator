@@ -11,6 +11,7 @@ class BooksimNetwork(RubyNetwork):
     cxx_header = 'mem/ruby/network/booksim/BooksimNetwork.hh'
     cxx_class = 'gem5::ruby::booksim::BooksimNetwork'
     booksim_config = Param.String("111", "Booksim's configuration file")
+    booksim_speedup = Param.UInt32(1,"Booksim Network Clock")
 
 
 class NetworkSwitch(BasicRouter):
