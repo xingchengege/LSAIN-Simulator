@@ -1,2 +1,2 @@
 # LSAIN-Simulator
-Large-Scale Accelerators Interconnection Networks Simulating platform
+Large-Scale Accelerators Interconnection Networks Simulating Platform
