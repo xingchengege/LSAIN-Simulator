@@ -540,7 +540,8 @@ TrafficManager::~TrafficManager( )
 void TrafficManager::_RetireFlit( Flit *f, int dest )
 {
     _deadlock_timer = 0;
-	f->src = _net[0]->GetActualNode(f->src);
+	// f->src = _net[0]->GetActualNode(f->src);
+	
 
     assert(_total_in_flight_flits[f->cl].count(f->id) > 0);
     _total_in_flight_flits[f->cl].erase(f->id);
@@ -567,7 +568,7 @@ void TrafficManager::_RetireFlit( Flit *f, int dest )
         err << "Flit " << f->id << " arrived at incorrect output " << dest;
         Error( err.str( ) );
     }
-  
+    f->dest = dest;
     if((_slowest_flit[f->cl] < 0) ||
        (_flat_stats[f->cl]->Max() < (f->atime - f->itime)))
         _slowest_flit[f->cl] = f->id;

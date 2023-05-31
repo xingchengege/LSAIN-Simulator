@@ -36,20 +36,20 @@ namespace booksim
 		bandwidth per lane = 16(GB/s)/16 = 1GB/s
 		latency per lane = 1(GHz)/ 1(GB/s) / 16(B/flit) = 16 cycles/flit
 		*/
-		PCIe_Gen3_x16 = 4,
+		PCIe_Gen3_x16 = 16,
 		/*
 		NVLink_V1:
 	    bandwidth = 20GB/s
 		latency per lane = 3(GHz)/ 20(GB/s) / 16(B/flit) = 6.4 cycles/flit ≈ 6 cycles/flit
 		*/
-		NVLink_V1 = 3,
+		NVLink_V1 = 6,
 		/*
 	    NVLink_V2:
 	    bandwidth = 25GB/s
 		latency per lane = 3(GHz)/ 50(GB/s) / 16(B/flit) = 0.96 cycles/flit ≈ 1 cycles/flit
 	    */
-		NVLink_V2 = 1,
-		QPI = 4
+		NVLink_V2 = 2,
+		QPI = 1
 	};
 
 	/*the version of NVIDIADGX-1*/
@@ -106,9 +106,9 @@ namespace booksim
 
 			void _buildTopology();
 
-			// int _getLanesNum(BusLatency bus);
+			int _getLanesNum(BusLatency bus);
 
-			// int _getRouterPortsNum(int router);
+			int _getRouterPortsNum(int router);
 
 		public:
 			NVIDIADGX1( const Configuration& config, const string &name );

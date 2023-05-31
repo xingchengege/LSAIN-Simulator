@@ -113,12 +113,12 @@ namespace booksim
 			iter2++){
 				cout<<"\t Router "<<iter2->first<<" lat "<<iter2->second.second<<endl;
 				//总线的每条lanes对应于一个channel
-				// _channels += _getLanesNum(iter2->second.second);
-				_channels++;
+				_channels += _getLanesNum(iter2->second.second);
+				// _channels++;
 			}
 		}
 		_size = router_list[ROUTER_ROUTER].size();
-		_nodes = 32 * node_list.size();
+		_nodes = 64 * node_list.size();
 		// cout<<_nodes<<endl;
 	}
 
@@ -138,11 +138,11 @@ namespace booksim
 		map<int, map<int, pair<int, BusLatency> > >::iterator niter;
 		for(niter = router_list[NODE_ROUTER].begin(); niter != router_list[NODE_ROUTER].end(); niter++)
 		{
-			map<int, map<int, pair<int, BusLatency> > >::iterator riter = 
-			                        router_list[ROUTER_ROUTER].find(niter->first);
+			// map<int, map<int, pair<int, BusLatency> > >::iterator riter = 
+			//                         router_list[ROUTER_ROUTER].find(niter->first);
 			//caculate radix
-			int radix = 32 * niter->second.size()+riter->second.size();
-			// int radix = _getRouterPortsNum(niter->first);
+			// int radix = 32 * niter->second.size()+riter->second.size();
+			int radix = _getRouterPortsNum(niter->first);
 			int node = niter->first;
 			cout<<"router "<<node<<" radix "<<radix<<endl;
 			//declare the routers
@@ -166,9 +166,9 @@ namespace booksim
 		        // int lanes_num = 1;
 				// int lanes_num = _getLanesNum(nniter->second.second);
 				// if(GPU_node_list.find(link)!=GPU_node_list.end())
-				// lanes_num = 8;
+				int lanes_num = 64;
 				// else lanes_num = 16;
-				for(int i = 0; i < 32; i++){
+				for(int i = 0; i < lanes_num; i++){
 					actual_outports[node][nniter->second.first].insert(actual_outcnt[node]);
 					// cout<<"vnode: "<<vnode<<" actual outport: "<< actual_outcnt[node]<<endl;
 			     	actual_outcnt[node]++;
@@ -215,7 +215,8 @@ namespace booksim
 		//since there is no way to systematically number the channels we just start from 0
 		//the map, is a mapping of output->input
 		// int channel_count = 0;
-		int channel_count = 0;
+		int vchannel_count = 0;
+		int pchannel_count = 0;
 		for(niter = router_list[NODE_ROUTER].begin(); niter != router_list[NODE_ROUTER].end(); niter++)
 		{
 			map<int, map<int, pair<int, BusLatency> > >::iterator riter = 
@@ -226,30 +227,27 @@ namespace booksim
 			for(rriter = riter->second.begin(); rriter != riter->second.end(); rriter++)
 			{
 				int other_node = rriter->first;
-				int link = channel_count;
+				int link = vchannel_count;
 				//add the output port assigned to the map
 				(riter->second)[other_node].first = virtual_outport[node];
 				cout<<"\t connected to router "<<other_node<<" using link "<<link
 				<<" at outport "<<rriter->second.first
 				<<" lat "<<rriter->second.second<<endl;
 				int lat_perlane = (int)rriter->second.second;
-		        // int lanes_num = _getLanesNum(rriter->second.second);
-				// for(int i = 0; i < lanes_num; i++){
-			      	// actual_outports[node][rriter->second.first].insert(actual_outcnt[node]);
-			     	// actual_outcnt[node]++;
-					// link = pchannel_count;
+		        int lanes_num = _getLanesNum(rriter->second.second);
+				for(int i = 0; i < lanes_num; i++){
+			      	actual_outports[node][rriter->second.first].insert(actual_outcnt[node]);
+			     	actual_outcnt[node]++;
+					link = pchannel_count;
 					// cout<<"plink "<<link<<" actual outport: "<<actual_outcnt[node] - 1 <<endl;
-			    actual_outports[node][rriter->second.first].insert(actual_outcnt[node]);
-			    actual_outcnt[node]++;
-				_chan[link]->SetLatency(lat_perlane);
-				_chan_cred[link]->SetLatency(lat_perlane);
+			     	_chan[link]->SetLatency(lat_perlane);
+					_chan_cred[link]->SetLatency(lat_perlane);
 
-				_routers[node]->AddOutputChannel( _chan[link], _chan_cred[link] );
-				_routers[other_node]->AddInputChannel( _chan[link], _chan_cred[link]);
-					// pchannel_count++;
-				// }
-				channel_count++;
-
+					_routers[node]->AddOutputChannel( _chan[link], _chan_cred[link] );
+					_routers[other_node]->AddInputChannel( _chan[link], _chan_cred[link]);
+					pchannel_count++;
+				}
+				vchannel_count++;
 			    virtual_outport[node]++;
 			}
 		}
@@ -360,45 +358,42 @@ namespace booksim
 		
 	}
 	
-	// int NVIDIADGX1::_getLanesNum(BusLatency bus){
-	// 	int lanes_num = 0;
-	// 	// return 1;
-	// 	// switch (bus)
-	// 	//  {
-	// 	//  	case BusLatency::PCIe_Gen3_x16 :
-	// 	// 		lanes_num = 16;
-	// 	// 		break;
-	// 	// 	case BusLatency::NVLink_V1 :
-	// 	// 	    lanes_num = 8;
-	// 	// 		break;
-	// 	// 	case BusLatency::NVLink_V2 :
-	// 	// 	    lanes_num = 16;
-	// 	// 		break;
-	// 	// 	default:
-	// 	// 	    lanes_num = 16;
-	// 	// 		break;
-	// 	// }
-	// 	// return lanes_num;
-	// }
+	int NVIDIADGX1::_getLanesNum(BusLatency bus){
+		int lanes_num = 0;
+		// return 1;
+		switch (bus)
+		 {
+		 	case BusLatency::PCIe_Gen3_x16 :
+				lanes_num = 16;
+				break;
+			case BusLatency::NVLink_V1 :
+			    lanes_num = 8;
+				break;
+			case BusLatency::NVLink_V2 :
+			    lanes_num = 8;
+				break;
+			default:
+			    lanes_num = 1;
+				break;
+		}
+		return lanes_num;
+	}
 
-    // int NVIDIADGX1::_getRouterPortsNum(int router){
-	// 	map<int, map<int, pair<int, BusLatency> > >::iterator niter = 
-	// 		                        router_list[NODE_ROUTER].find(router);
-	// 	map<int, map<int, pair<int, BusLatency> > >::iterator riter = 
-	// 		                        router_list[ROUTER_ROUTER].find(router);
-	// 	// int radix = niter->second.size();
-	// 	int radix = 0;
-	// 	for(auto x : niter->second){
-	// 		if(GPU_node_list.find(niter->first)!=GPU_node_list.end())
-	// 		   radix+=8;
-	// 		else radix+=16;
-	// 		// radix += _getLanesNum(x.second.second);
-	// 	}
-	// 	for(auto x : riter->second){
-	// 		radix += _getLanesNum(x.second.second);
-	// 	}
-	// 	return radix;
-	// }
+    int NVIDIADGX1::_getRouterPortsNum(int router){
+		map<int, map<int, pair<int, BusLatency> > >::iterator niter = 
+			                        router_list[NODE_ROUTER].find(router);
+		map<int, map<int, pair<int, BusLatency> > >::iterator riter = 
+			                        router_list[ROUTER_ROUTER].find(router);
+		// int radix = niter->second.size();
+		int radix = 0;
+		for(auto x : niter->second){
+			radix += 64;
+		}
+		for(auto x : riter->second){
+			radix += _getLanesNum(x.second.second);
+		}
+		return radix;
+	}
 	
 	void NVIDIADGX1::_buildRoutingTable(){
 		cout<<"========================== Routing table  =====================\n";  

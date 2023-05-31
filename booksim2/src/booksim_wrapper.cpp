@@ -107,6 +107,7 @@ namespace booksim{
 			pair<Flit,Flit> rp = _traffic_manager->RetirePacket();
 			Flit head = rp.first;
 			Flit tail = rp.second;
+			//  = nets[0]->Get
 			RetiredPacket p = {head.pid,
 			                   head.src,
 							   head.dest,

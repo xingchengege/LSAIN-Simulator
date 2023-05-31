@@ -91,8 +91,11 @@ namespace booksim
 				if(!_ejection_queue[cl][n].empty())
 				{
 					pair<Flit, Flit> rp = _ejection_queue[cl][n].front();
-					rp.first.dest = rp.first.dest;
-					rp.second.dest = rp.second.dest;
+					rp.first.src = _net[0]->GetActualNode(rp.first.src);
+					rp.first.dest = _net[0]->GetActualNode(rp.first.dest);
+					
+					// rp.first.dest = rp.first.dest;
+					// rp.second.dest = rp.second.dest;
 					_ejection_queue[cl][n].pop();
 
 					return rp;

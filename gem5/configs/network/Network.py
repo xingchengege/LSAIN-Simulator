@@ -285,7 +285,7 @@ def init_network(options, network, InterfaceClass):
             extLink.int_cred_bridge = int_cred_bridges
     if options.network == "booksim":
             network.booksim_config = options.booksim_config
-            network.booksim_speedup = options.booksim_speedup
+            # network.booksim_speedup = options.booksim_speedup
     
     if options.network == "simple":
         if options.simple_physical_channels:
